@@ -36,7 +36,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.4</version>
                 <configuration>
-                    <mainClass>CMS.App</mainClass>
+                    <mainClass>CMS.CMSApp</mainClass>
                 </configuration>
                 <executions>
                     <execution>
