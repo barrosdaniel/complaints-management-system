@@ -37,7 +37,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField layoutX="25.0" layoutY="66.0" prefHeight="27.0" prefWidth="200.0">
+                        <TextField fx:id="tfCustomerID" layoutX="25.0" layoutY="66.0" prefHeight="27.0" prefWidth="200.0">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -47,7 +47,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField layoutX="25.0" layoutY="128.0" prefHeight="31.0" prefWidth="400.0">
+                        <TextField fx:id="tfFirstName" layoutX="25.0" layoutY="128.0" prefHeight="31.0" prefWidth="400.0">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -57,7 +57,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField layoutX="25.0" layoutY="190.0" prefHeight="31.0" prefWidth="400.0">
+                        <TextField fx:id="tfLastName" layoutX="25.0" layoutY="190.0" prefHeight="31.0" prefWidth="400.0">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -67,7 +67,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField layoutX="25.0" layoutY="252.0" prefHeight="31.0" prefWidth="400.0">
+                        <TextField fx:id="tfContactNumber" layoutX="25.0" layoutY="252.0" prefHeight="31.0" prefWidth="400.0">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -77,7 +77,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField layoutX="24.0" layoutY="314.0" prefHeight="31.0" prefWidth="400.0">
+                        <TextField fx:id="tfEmail" layoutX="24.0" layoutY="314.0" prefHeight="31.0" prefWidth="400.0">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -87,9 +87,9 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextArea layoutX="24.0" layoutY="376.0" prefHeight="120.0" prefWidth="400.0">
+                        <TextArea fx:id="taAddress" layoutX="24.0" layoutY="376.0" prefHeight="120.0" prefWidth="400.0">
                            <font>
-                              <Font size="14.0" />
+                              <Font size="16.0" />
                            </font>
                         </TextArea>
                         <HBox layoutX="24.0" layoutY="507.0" prefHeight="32.0" prefWidth="400.0">
@@ -128,7 +128,7 @@
                               </MenuButton>
                            </children>
                         </HBox>
-                        <Button layoutX="24.0" layoutY="598.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="400.0" text="🔎  Search ">
+                        <Button layoutX="24.0" layoutY="598.0" mnemonicParsing="false" onAction="#customerSearchButtonClick" prefHeight="39.0" prefWidth="400.0" text="🔎  Search ">
                            <font>
                               <Font size="16.0" />
                            </font>
