@@ -1,10 +1,13 @@
 package CMS;
 
+import CMS.Model.Complaint;
+import CMS.Model.Customer;
 import CMS.Util.DatabaseHandler;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -35,12 +38,16 @@ public class UserInterfaceController implements Initializable {
 //    @FXML
 //    private TextField customerType?;
     
+    private ArrayList<Customer> customersList = new ArrayList();
+    private ArrayList<Complaint> complaintsList = new ArrayList();
     private String customerID;
     private String customerFirstName;
     private String customerLastName;
     private String customerContactNumber;
     private String customerEmail;
     private String customerAddress;
+    private String customerType;
+    private String customerProduct;
     
     @FXML
     public void customerSearchButtonClick() {
@@ -70,11 +77,42 @@ public class UserInterfaceController implements Initializable {
             System.out.println("Connection failed.");
         }
     }
+    
+    private void loadCustomersRecords() {
+        try (Connection connection = DatabaseHandler.getConnection()) {
+            PreparedStatement getAllCustomersStatement = connection.prepareStatement(
+                "SELECT * FROM customers;"
+            );
+            ResultSet getAllCustomersQueryResults = getAllCustomersStatement.executeQuery();
+            while (getAllCustomersQueryResults.next()) {
+                customerID = getAllCustomersQueryResults.getString("custID");
+                customerFirstName = getAllCustomersQueryResults.getString("fName");
+                customerLastName = getAllCustomersQueryResults.getString("lName");
+                customerContactNumber = getAllCustomersQueryResults.getString("mobile");
+                customerEmail = getAllCustomersQueryResults.getString("email");
+                customerAddress = getAllCustomersQueryResults.getString("addr");
+                customerType = getAllCustomersQueryResults.getString("custType");
+                customerProduct = getAllCustomersQueryResults.getString("product");
+                Customer newCustomer = new Customer(
+                        customerID,
+                        customerFirstName, 
+                        customerLastName,
+                        customerContactNumber, 
+                        customerEmail, 
+                        customerAddress, 
+                        customerType,
+                        customerProduct);
+                customersList.add(newCustomer);
+            }
+        } catch (Exception e) {
+            System.out.println("Connection to the Customers database failed.");
+        }
+    }
 
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Empty method.
+        loadCustomersRecords();
     }    
     
 }
