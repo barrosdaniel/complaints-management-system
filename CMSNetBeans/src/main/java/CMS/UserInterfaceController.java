@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
@@ -33,10 +34,10 @@ public class UserInterfaceController implements Initializable {
     private TextField tfEmail;
     @FXML
     private TextArea taAddress;
-//    @FXML
-//    private TextField product?;
-//    @FXML
-//    private TextField customerType?;
+    @FXML
+    private ComboBox cbProduct;
+    @FXML
+    private ComboBox cbCustomerType;
     
     private ArrayList<Customer> customersList = new ArrayList();
     private ArrayList<Complaint> complaintsList = new ArrayList();
@@ -48,6 +49,11 @@ public class UserInterfaceController implements Initializable {
     private String customerAddress;
     private String customerType;
     private String customerProduct;
+    
+    private void loadComboBoxOptions() {
+        cbProduct.getItems().addAll("Internet", "Phone", "Billing");
+        cbCustomerType.getItems().addAll("Business", "Residential");
+    }
     
     @FXML
     public void customerSearchButtonClick() {
@@ -109,10 +115,9 @@ public class UserInterfaceController implements Initializable {
         }
     }
 
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        loadComboBoxOptions();
         loadCustomersRecords();
     }    
-    
 }
