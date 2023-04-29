@@ -36,11 +36,21 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="tfCustomerID" layoutX="25.0" layoutY="66.0" prefHeight="27.0" prefWidth="200.0">
+                        <TextField fx:id="tfCustomerID" layoutX="25.0" layoutY="66.0" prefHeight="27.0" prefWidth="180.0">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </TextField>
+                        <Button layoutX="214.0" layoutY="66.0" mnemonicParsing="false" onAction="#customerSearchLastNameButtonClick" prefHeight="25.0" prefWidth="110.0" text="📄 View All">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="334.0" layoutY="66.0" mnemonicParsing="false" onAction="#customerSearchLastNameButtonClick" prefHeight="25.0" prefWidth="90.0" text="🔄 Clear ">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
                         <Label alignment="BOTTOM_LEFT" contentDisplay="TOP" graphicTextGap="0.0" layoutX="25.0" layoutY="101.0" prefHeight="29.0" prefWidth="400.0" text="First Name">
                            <font>
                               <Font size="16.0" />
@@ -56,21 +66,31 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="tfLastName" layoutX="25.0" layoutY="190.0" prefHeight="31.0" prefWidth="400.0">
+                        <TextField fx:id="tfLastName" layoutX="25.0" layoutY="190.0" prefHeight="31.0" prefWidth="300.0">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </TextField>
+                        <Button layoutX="334.0" layoutY="190.0" mnemonicParsing="false" onAction="#customerSearchLastNameButtonClick" prefHeight="25.0" prefWidth="90.0" text="🔍 Search">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
                         <Label alignment="BOTTOM_LEFT" contentDisplay="TOP" graphicTextGap="0.0" layoutX="25.0" layoutY="225.0" prefHeight="29.0" prefWidth="400.0" text="Contact Number">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="tfContactNumber" layoutX="25.0" layoutY="252.0" prefHeight="31.0" prefWidth="400.0">
+                        <TextField fx:id="tfContactNumber" layoutX="25.0" layoutY="252.0" prefHeight="31.0" prefWidth="300.0">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </TextField>
+                        <Button layoutX="334.0" layoutY="252.0" mnemonicParsing="false" onAction="#customerSearchContactNumberButtonClick" prefHeight="25.0" prefWidth="90.0" text="🔍 Search">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
                         <Label alignment="BOTTOM_LEFT" contentDisplay="TOP" graphicTextGap="0.0" layoutX="25.0" layoutY="287.0" prefHeight="29.0" prefWidth="403.0" text="Email">
                            <font>
                               <Font size="16.0" />
@@ -111,17 +131,47 @@
                               <ComboBox fx:id="cbCustomerType" prefHeight="32.0" prefWidth="250.0" promptText="Select customer type" />
                            </children>
                         </HBox>
-                        <Button layoutX="24.0" layoutY="598.0" mnemonicParsing="false" onAction="#customerSearchButtonClick" prefHeight="39.0" prefWidth="400.0" text="🔎  Search ">
+                        <Button layoutX="25.0" layoutY="603.0" mnemonicParsing="false" onAction="#customerSearchLastNameButtonClick" prefHeight="25.0" prefWidth="90.0" text="⬅   Prev.">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </Button>
-                        <Button layoutX="25.0" layoutY="647.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="400.0" text="+   Add Complaint">
+                        <TextField fx:id="tfCustomerID1" layoutX="149.0" layoutY="603.0" prefHeight="22.0" prefWidth="50.0">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </TextField>
+                        <Label alignment="CENTER" contentDisplay="TOP" graphicTextGap="0.0" layoutX="199.0" layoutY="606.0" prefHeight="29.0" prefWidth="50.0" text="of" textAlignment="CENTER">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="tfCustomerID11" layoutX="249.0" layoutY="603.0" prefHeight="22.0" prefWidth="50.0">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </TextField>
+                        <Button layoutX="334.0" layoutY="603.0" mnemonicParsing="false" onAction="#customerSearchLastNameButtonClick" prefHeight="25.0" prefWidth="90.0" text="Next   ➡">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </Button>
-                        <Button layoutX="254.0" layoutY="697.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="170.0" text="↻   Search New">
+                        <Button layoutX="25.0" layoutY="658.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="120.0" text="+   New">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="166.0" layoutY="658.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="120.0" text="✏   Edit">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="305.0" layoutY="658.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="120.0" text="💾   Save">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="25.0" layoutY="714.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="400.0" text="+   Add Complaint">
                            <font>
                               <Font size="16.0" />
                            </font>

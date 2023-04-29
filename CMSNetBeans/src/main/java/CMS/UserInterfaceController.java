@@ -40,7 +40,9 @@ public class UserInterfaceController implements Initializable {
     private ComboBox cbCustomerType;
     
     private ArrayList<Customer> customersList = new ArrayList();
+    private ArrayList<Customer> tempCustomersList = new ArrayList();
     private ArrayList<Complaint> complaintsList = new ArrayList();
+    private ArrayList<Complaint> tempComplaintsList = new ArrayList();
     private String customerID;
     private String customerFirstName;
     private String customerLastName;
@@ -55,34 +57,44 @@ public class UserInterfaceController implements Initializable {
         cbCustomerType.getItems().addAll("Business", "Residential");
     }
     
-    @FXML
-    public void customerSearchButtonClick() {
-        System.out.println("Search Button pressed.");
+    private void clearAllCustomerFields() {
+        tfCustomerID.clear();
         tfFirstName.clear();
         tfLastName.clear();
         tfContactNumber.clear();
         tfEmail.clear();
         taAddress.clear();
-        try (Connection connection = DatabaseHandler.getConnection()) {
-            System.out.println("Connection successful.");
-            customerID = tfCustomerID.getText();
-            PreparedStatement query = connection.prepareStatement(
-                "SELECT * FROM customers WHERE custID = " + customerID + ";"
-            );
-            System.out.println("Query generation successful.");
-            ResultSet results = query.executeQuery();
-            System.out.println("Query execution successful.");
-            if (results.next()) {
-                tfFirstName.setText(results.getString("fName"));
-                tfLastName.setText(results.getString("lName"));
-                tfContactNumber.setText(results.getString("mobile"));
-                tfEmail.setText(results.getString("email"));
-                taAddress.setText(results.getString("addr"));
+        cbProduct.getSelectionModel().clearSelection();
+        cbCustomerType.getSelectionModel().clearSelection();
+    }
+    
+    @FXML
+    public void customerSearchLastNameButtonClick() {
+        System.out.println("Search by Last Name button clicked.");
+        String lastNameInput = tfLastName.getText();
+        System.out.println("User entered: " + lastNameInput);
+        clearAllCustomerFields();
+        tempCustomersList.clear();
+        for (Customer customer : customersList) {
+            if (customer.getCustomerLastName().contains(lastNameInput)) {
+                System.out.println("Match found for " + lastNameInput);
+                tempCustomersList.add(customer);
             }
-        } catch (Exception e) {
-            System.out.println("Connection failed.");
+        }
+        if (tempCustomersList.size() == 0) {
+            System.out.println("No match foudn for " + lastNameInput);
+        } else {
+            for (Customer customer : tempCustomersList) {
+                System.out.println(customer);
+            }
         }
     }
+    
+    @FXML
+    public void customerSearchContactNumberButtonClick() {
+        System.out.println("Search by Contact Number button clicked.");
+    }
+    
     
     private void loadCustomersRecords() {
         try (Connection connection = DatabaseHandler.getConnection()) {
@@ -119,5 +131,5 @@ public class UserInterfaceController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         loadComboBoxOptions();
         loadCustomersRecords();
-    }    
+    }
 }
