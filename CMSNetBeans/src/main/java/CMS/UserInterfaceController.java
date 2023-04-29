@@ -57,7 +57,8 @@ public class UserInterfaceController implements Initializable {
         cbCustomerType.getItems().addAll("Business", "Residential");
     }
     
-    private void clearAllCustomerFields() {
+    @FXML
+    private void clearAllCustomerFieldsButtonClick() {
         tfCustomerID.clear();
         tfFirstName.clear();
         tfLastName.clear();
@@ -73,7 +74,7 @@ public class UserInterfaceController implements Initializable {
         System.out.println("Search by Last Name button clicked.");
         String lastNameInput = tfLastName.getText();
         System.out.println("User entered: " + lastNameInput);
-        clearAllCustomerFields();
+        clearAllCustomerFieldsButtonClick();
         tempCustomersList.clear();
         for (Customer customer : customersList) {
             if (customer.getCustomerLastName().contains(lastNameInput)) {

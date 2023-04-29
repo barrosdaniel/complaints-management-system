@@ -46,7 +46,7 @@
                               <Font size="16.0" />
                            </font>
                         </Button>
-                        <Button layoutX="334.0" layoutY="66.0" mnemonicParsing="false" onAction="#customerSearchLastNameButtonClick" prefHeight="25.0" prefWidth="90.0" text="🔄 Clear ">
+                        <Button layoutX="334.0" layoutY="66.0" mnemonicParsing="false" onAction="#clearAllCustomerFieldsButtonClick" prefHeight="25.0" prefWidth="90.0" text="🔄 Clear ">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -182,8 +182,6 @@
                      </padding>
                   </Pane>
                </content></Tab>
-          <Tab text="Complaints" />
-            <Tab text="Browse Complaints" />
             <Tab text="View Reports" />
         </tabs>
       </TabPane>
