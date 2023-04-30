@@ -280,6 +280,28 @@ public class UserInterfaceController implements Initializable {
         cbCustomerType.setStyle("-fx-opacity: 1.0");
     }
     
+    @FXML
+    public void nextCustomerButtonClick() {
+        if (currentCustomer + 1 == numberOfCustomers) {
+            currentCustomer = 0;
+        } else {
+            currentCustomer++;
+        }
+        displayCustomerRecord(currentCustomer);
+        refreshPaginationNumbers("FullSet");
+    }
+    
+    @FXML
+    public void previousCustomerButtonClick() {
+        if (currentCustomer + 1 == numberOfCustomers) {
+            currentCustomer = 0;
+        } else {
+            currentCustomer++;
+        }
+        displayCustomerRecord(currentCustomer);
+        refreshPaginationNumbers("FullSet");
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadComboBoxOptions();
