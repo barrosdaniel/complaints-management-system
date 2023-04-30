@@ -293,10 +293,10 @@ public class UserInterfaceController implements Initializable {
     
     @FXML
     public void previousCustomerButtonClick() {
-        if (currentCustomer + 1 == numberOfCustomers) {
-            currentCustomer = 0;
+        if (currentCustomer == 0) {
+            currentCustomer = numberOfCustomers - 1;
         } else {
-            currentCustomer++;
+            currentCustomer--;
         }
         displayCustomerRecord(currentCustomer);
         refreshPaginationNumbers("FullSet");
