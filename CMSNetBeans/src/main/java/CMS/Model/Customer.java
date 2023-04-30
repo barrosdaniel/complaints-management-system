@@ -11,8 +11,8 @@ public class Customer {
     private String customerContactNumber;
     private String customerEmail;
     private String customerAddress;
-    private String customerType;
     private String customerProduct;
+    private String customerType;
 
     public Customer(String customerID, String customerFirstName, String customerLastName, String customerContactNumber, String customerEmail, String customerAddress, String customerType, String customerProduct) {
         this.customerID = customerID;
@@ -21,8 +21,8 @@ public class Customer {
         this.customerContactNumber = customerContactNumber;
         this.customerEmail = customerEmail;
         this.customerAddress = customerAddress;
-        this.customerType = customerType;
         this.customerProduct = customerProduct;
+        this.customerType = customerType;
     }
     
     public String getCustomerID() {

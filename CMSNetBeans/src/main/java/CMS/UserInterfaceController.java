@@ -39,9 +39,9 @@ public class UserInterfaceController implements Initializable {
     @FXML
     private ComboBox cbCustomerType;
     @FXML
-    private TextField currentCustomer;
+    private TextField tfCurrentCustomer;
     @FXML
-    private TextField totalCustomers;
+    private TextField tfTotalCustomers;
     
     private ArrayList<Customer> customersList = new ArrayList();
     private ArrayList<Customer> tempCustomersList = new ArrayList();
@@ -55,6 +55,8 @@ public class UserInterfaceController implements Initializable {
     private String customerAddress;
     private String customerProduct;
     private String customerType;
+    private int currentCustomer;
+    private int numberOfCustomers;
     private String nextSaveAction;
     
     private void loadComboBoxOptions() {
@@ -110,12 +112,10 @@ public class UserInterfaceController implements Initializable {
     @FXML
     public void saveCustomerButtonClick() {
         Customer newCustomer = makeNewCustomerObjectfromUI();
-        customersList.add(newCustomer);
-        System.out.println("Customer added to list. List length: " + customersList.size());
-        for (Customer customer : customersList) {
-            System.out.println(customer);
+        boolean addedToDatabase = addCustomerToDatabase(newCustomer);
+        if (addedToDatabase) {
+            customersList.add(newCustomer);
         }
-        addCustomerToDatabase(newCustomer);
         clearAllCustomerFieldsButtonClick();
         disableAllCustomerFields();
         nextSaveAction = null;
@@ -126,7 +126,7 @@ public class UserInterfaceController implements Initializable {
         customerFirstName = tfFirstName.getText();
         customerLastName = tfLastName.getText();
         customerContactNumber = tfContactNumber.getText();
-        removeCustomerContactNumberBlankSpaces();
+        customerContactNumber = removeBlankSpaces(customerContactNumber);
         customerEmail = tfEmail.getText();
         customerAddress = taAddress.getText();
         customerProduct = cbProduct.getValue().toString();
@@ -135,23 +135,26 @@ public class UserInterfaceController implements Initializable {
         return newCustomer;
     }
     
-    private void removeCustomerContactNumberBlankSpaces () {
-        if (customerContactNumber == null) {
-            return;
+    private String removeBlankSpaces (String input) {
+        if (input == null) {
+            return "";
+        } else {
+            String trimmedInput = input.trim();
+            trimmedInput = trimmedInput.replace(" ", "");
+            return trimmedInput;
         }
-        customerContactNumber.replaceAll("\\s+", "");
     }
     
     private Customer getNewCustomerObject() {
-            return new Customer(
-                customerID,
-                customerFirstName,
-                customerLastName,
-                customerContactNumber,
-                customerEmail,
-                customerAddress,
-                customerType,
-                customerProduct);
+        return new Customer(
+            customerID,
+            customerFirstName,
+            customerLastName,
+            customerContactNumber,
+            customerEmail,
+            customerAddress,
+            customerType,
+            customerProduct);
     }
     
     private void enableAllCustomerFields() {
@@ -190,13 +193,14 @@ public class UserInterfaceController implements Initializable {
         cbProduct.setStyle("-fx-control-inner-background: #F1F1F1;");
         cbCustomerType.setDisable(true);
         cbCustomerType.setStyle("-fx-control-inner-background: #F1F1F1;");
-        currentCustomer.setEditable(false);
-        currentCustomer.setStyle("-fx-control-inner-background: #F1F1F1;");
-        totalCustomers.setEditable(false);
-        totalCustomers.setStyle("-fx-control-inner-background: #F1F1F1;");
+        tfCurrentCustomer.setEditable(false);
+        tfCurrentCustomer.setStyle("-fx-control-inner-background: #F1F1F1;");
+        tfTotalCustomers.setEditable(false);
+        tfTotalCustomers.setStyle("-fx-control-inner-background: #F1F1F1;");
     }
     
-    private void addCustomerToDatabase(Customer newCustomer) {
+    private boolean addCustomerToDatabase(Customer newCustomer) {
+        boolean addedToDatabase = false;
         customerID = newCustomer.getCustomerID();
         customerFirstName = newCustomer.getCustomerFirstName();
         customerLastName = newCustomer.getCustomerLastName();
@@ -208,7 +212,7 @@ public class UserInterfaceController implements Initializable {
         try (Connection connection = DatabaseHandler.getConnection()) {
             System.out.println("Connection to Customer database successfull.");
             PreparedStatement insertNewCustomerStatement = connection.prepareStatement(
-                String.format("INSERT INTO customers (custID, fName, lName, mobile, email, addr, custType, product) " +
+                String.format("INSERT INTO customers (custID, fName, lName, mobile, email, addr, product, custType) " +
                 "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');", 
                 customerID, customerFirstName, customerLastName, customerContactNumber,
                 customerEmail, customerAddress, customerProduct, customerType)
@@ -219,6 +223,7 @@ public class UserInterfaceController implements Initializable {
             if (rowsInserted > 0) {
                 System.out.println("Customer added to the database.");
                 System.out.println(newCustomer);
+                addedToDatabase = true;
             } else {
                 System.out.println("ERROR: Customer record not added to the Customer database.");
             }
@@ -227,12 +232,13 @@ public class UserInterfaceController implements Initializable {
             System.out.println("Connection to the Customers database failed. Unable to save records to database.");
             e.printStackTrace();
         }
+        return addedToDatabase;
     }
     
     private void loadCustomersRecords() {
         try (Connection connection = DatabaseHandler.getConnection()) {
             PreparedStatement getAllCustomersStatement = connection.prepareStatement(
-                "SELECT * FROM customers;"
+                "SELECT * FROM customers ORDER BY custID;"
             );
             ResultSet getAllCustomersQueryResults = getAllCustomersStatement.executeQuery();
             while (getAllCustomersQueryResults.next()) {
@@ -253,10 +259,58 @@ public class UserInterfaceController implements Initializable {
         }
     }
 
+    private void refreshPaginationNumbers(String set) {
+        if (set.equals("FullSet")); {
+            tfCurrentCustomer.setText(currentCustomer + 1 + "");
+            tfTotalCustomers.setText(numberOfCustomers + "");
+        }
+    }
+    
+    private void displayCustomerRecord(int index) {
+        Customer customer = customersList.get(index);
+        tfCustomerID.setText(customer.getCustomerID());
+        tfFirstName.setText(customer.getCustomerFirstName());
+        tfLastName.setText(customer.getCustomerLastName());
+        tfContactNumber.setText(customer.getCustomerContactNumber());
+        tfEmail.setText(customer.getCustomerEmail());
+        taAddress.setText(customer.getCustomerAddress());
+        cbProduct.setValue(customer.getCustomerProduct());
+        cbProduct.setStyle("-fx-opacity: 1.0");
+        cbCustomerType.setValue(customer.getCustomerType());
+        cbCustomerType.setStyle("-fx-opacity: 1.0");
+    }
+    
+    @FXML
+    public void nextCustomerButtonClick() {
+        if (currentCustomer + 1 == numberOfCustomers) {
+            currentCustomer = 0;
+        } else {
+            currentCustomer++;
+        }
+        displayCustomerRecord(currentCustomer);
+        refreshPaginationNumbers("FullSet");
+    }
+    
+    @FXML
+    public void previousCustomerButtonClick() {
+        if (currentCustomer == 0) {
+            currentCustomer = numberOfCustomers - 1;
+        } else {
+            currentCustomer--;
+        }
+        displayCustomerRecord(currentCustomer);
+        refreshPaginationNumbers("FullSet");
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadComboBoxOptions();
         disableAllCustomerFields();
         loadCustomersRecords();
+        currentCustomer = 0;
+        numberOfCustomers = customersList.size();
+        displayCustomerRecord(currentCustomer);
+        refreshPaginationNumbers("FullSet");
     }
+
 }

@@ -131,12 +131,12 @@
                               <ComboBox fx:id="cbCustomerType" prefHeight="32.0" prefWidth="250.0" promptText="Select customer type" />
                            </children>
                         </HBox>
-                        <Button layoutX="25.0" layoutY="603.0" mnemonicParsing="false" onAction="#customerSearchLastNameButtonClick" prefHeight="25.0" prefWidth="90.0" text="⬅   Prev.">
+                        <Button layoutX="25.0" layoutY="603.0" mnemonicParsing="false" onAction="#previousCustomerButtonClick" prefHeight="25.0" prefWidth="90.0" text="⬅   Prev.">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </Button>
-                        <TextField fx:id="currentCustomer" layoutX="149.0" layoutY="603.0" prefHeight="22.0" prefWidth="50.0">
+                        <TextField fx:id="tfCurrentCustomer" layoutX="149.0" layoutY="603.0" prefHeight="22.0" prefWidth="50.0">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -146,12 +146,12 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="totalCustomers" layoutX="249.0" layoutY="603.0" prefHeight="22.0" prefWidth="50.0">
+                        <TextField fx:id="tfTotalCustomers" layoutX="249.0" layoutY="603.0" prefHeight="22.0" prefWidth="50.0">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </TextField>
-                        <Button layoutX="334.0" layoutY="603.0" mnemonicParsing="false" onAction="#customerSearchLastNameButtonClick" prefHeight="25.0" prefWidth="90.0" text="Next   ➡">
+                        <Button layoutX="334.0" layoutY="603.0" mnemonicParsing="false" onAction="#nextCustomerButtonClick" prefHeight="25.0" prefWidth="90.0" text="Next   ➡">
                            <font>
                               <Font size="16.0" />
                            </font>
