@@ -136,7 +136,7 @@
                               <Font size="16.0" />
                            </font>
                         </Button>
-                        <TextField fx:id="currentCustomer" layoutX="149.0" layoutY="603.0" prefHeight="22.0" prefWidth="50.0">
+                        <TextField fx:id="tfCurrentCustomer" layoutX="149.0" layoutY="603.0" prefHeight="22.0" prefWidth="50.0">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -146,7 +146,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="totalCustomers" layoutX="249.0" layoutY="603.0" prefHeight="22.0" prefWidth="50.0">
+                        <TextField fx:id="tfTotalCustomers" layoutX="249.0" layoutY="603.0" prefHeight="22.0" prefWidth="50.0">
                            <font>
                               <Font size="16.0" />
                            </font>
