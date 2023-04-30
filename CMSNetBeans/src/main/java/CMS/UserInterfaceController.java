@@ -110,12 +110,14 @@ public class UserInterfaceController implements Initializable {
     @FXML
     public void saveCustomerButtonClick() {
         Customer newCustomer = makeNewCustomerObjectfromUI();
-        customersList.add(newCustomer);
-        System.out.println("Customer added to list. List length: " + customersList.size());
+        boolean addedToDatabase = addCustomerToDatabase(newCustomer);
+        if (addedToDatabase) {
+            customersList.add(newCustomer);
+            System.out.println("Customer added to list. List length: " + customersList.size());
+        }
         for (Customer customer : customersList) {
             System.out.println(customer);
         }
-        addCustomerToDatabase(newCustomer);
         clearAllCustomerFieldsButtonClick();
         disableAllCustomerFields();
         nextSaveAction = null;
@@ -126,7 +128,11 @@ public class UserInterfaceController implements Initializable {
         customerFirstName = tfFirstName.getText();
         customerLastName = tfLastName.getText();
         customerContactNumber = tfContactNumber.getText();
-        removeCustomerContactNumberBlankSpaces();
+        System.out.println(customerContactNumber);
+        System.out.println("Customer Contact Number lenght: " + customerContactNumber.length());
+        customerContactNumber = removeBlankSpaces(customerContactNumber);
+        System.out.println(customerContactNumber);
+        System.out.println("Customer Contact Number lenght: " + customerContactNumber.length());
         customerEmail = tfEmail.getText();
         customerAddress = taAddress.getText();
         customerProduct = cbProduct.getValue().toString();
@@ -135,23 +141,26 @@ public class UserInterfaceController implements Initializable {
         return newCustomer;
     }
     
-    private void removeCustomerContactNumberBlankSpaces () {
-        if (customerContactNumber == null) {
-            return;
+    private String removeBlankSpaces (String input) {
+        if (input == null) {
+            return "";
+        } else {
+            String trimmedInput = input.trim();
+            trimmedInput = trimmedInput.replace(" ", "");
+            return trimmedInput;
         }
-        customerContactNumber.replaceAll("\\s+", "");
     }
     
     private Customer getNewCustomerObject() {
-            return new Customer(
-                customerID,
-                customerFirstName,
-                customerLastName,
-                customerContactNumber,
-                customerEmail,
-                customerAddress,
-                customerType,
-                customerProduct);
+        return new Customer(
+            customerID,
+            customerFirstName,
+            customerLastName,
+            customerContactNumber,
+            customerEmail,
+            customerAddress,
+            customerType,
+            customerProduct);
     }
     
     private void enableAllCustomerFields() {
@@ -196,7 +205,8 @@ public class UserInterfaceController implements Initializable {
         totalCustomers.setStyle("-fx-control-inner-background: #F1F1F1;");
     }
     
-    private void addCustomerToDatabase(Customer newCustomer) {
+    private boolean addCustomerToDatabase(Customer newCustomer) {
+        boolean addedToDatabase = false;
         customerID = newCustomer.getCustomerID();
         customerFirstName = newCustomer.getCustomerFirstName();
         customerLastName = newCustomer.getCustomerLastName();
@@ -208,7 +218,7 @@ public class UserInterfaceController implements Initializable {
         try (Connection connection = DatabaseHandler.getConnection()) {
             System.out.println("Connection to Customer database successfull.");
             PreparedStatement insertNewCustomerStatement = connection.prepareStatement(
-                String.format("INSERT INTO customers (custID, fName, lName, mobile, email, addr, custType, product) " +
+                String.format("INSERT INTO customers (custID, fName, lName, mobile, email, addr, product, custType) " +
                 "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');", 
                 customerID, customerFirstName, customerLastName, customerContactNumber,
                 customerEmail, customerAddress, customerProduct, customerType)
@@ -219,6 +229,7 @@ public class UserInterfaceController implements Initializable {
             if (rowsInserted > 0) {
                 System.out.println("Customer added to the database.");
                 System.out.println(newCustomer);
+                addedToDatabase = true;
             } else {
                 System.out.println("ERROR: Customer record not added to the Customer database.");
             }
@@ -227,6 +238,7 @@ public class UserInterfaceController implements Initializable {
             System.out.println("Connection to the Customers database failed. Unable to save records to database.");
             e.printStackTrace();
         }
+        return addedToDatabase;
     }
     
     private void loadCustomersRecords() {
