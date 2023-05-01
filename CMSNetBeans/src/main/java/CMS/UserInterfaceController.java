@@ -66,7 +66,10 @@ public class UserInterfaceController implements Initializable {
     
     @FXML
     public void viewAllCustomersButtonClick() {
-        
+        currentCustomer = 0;
+        numberOfCustomers = customersList.size();
+        displayCustomerRecord(currentCustomer);
+        refreshPaginationNumbers("FullSet");
     }
     
     @FXML
@@ -321,10 +324,6 @@ public class UserInterfaceController implements Initializable {
         loadComboBoxOptions();
         disableAllCustomerFields();
         loadCustomersRecords();
-        currentCustomer = 0;
-        numberOfCustomers = customersList.size();
-        displayCustomerRecord(currentCustomer);
-        refreshPaginationNumbers("FullSet");
+        viewAllCustomersButtonClick();
     }
-
 }
