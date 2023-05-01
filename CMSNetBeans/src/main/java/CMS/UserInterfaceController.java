@@ -66,6 +66,7 @@ public class UserInterfaceController implements Initializable {
     
     @FXML
     public void viewAllCustomersButtonClick() {
+        disableAllCustomerFields();
         currentCustomer = 0;
         numberOfCustomers = customersList.size();
         displayCustomerRecord(currentCustomer);
@@ -74,6 +75,12 @@ public class UserInterfaceController implements Initializable {
     
     @FXML
     public void clearAllCustomerFieldsButtonClick() {
+        if (tfCustomerID.isEditable()) {
+            clearAllCustomersFields();
+        }
+    }
+    
+    private void clearAllCustomersFields() {
         tfCustomerID.clear();
         tfFirstName.clear();
         tfLastName.clear();
@@ -116,8 +123,10 @@ public class UserInterfaceController implements Initializable {
     @FXML
     public void newCustomerButtonClick() {
         nextSaveAction = "New";
-        clearAllCustomerFieldsButtonClick();
+        clearAllCustomersFields();
         enableAllCustomerFields();
+        tfCurrentCustomer.setText(numberOfCustomers + 1 + "");
+        tfTotalCustomers.setText(numberOfCustomers + 1 + "");
     }
     
     @FXML
@@ -299,6 +308,7 @@ public class UserInterfaceController implements Initializable {
     
     @FXML
     public void nextCustomerButtonClick() {
+        disableAllCustomerFields();
         if (currentCustomer + 1 == numberOfCustomers) {
             currentCustomer = 0;
         } else {
@@ -310,6 +320,7 @@ public class UserInterfaceController implements Initializable {
     
     @FXML
     public void previousCustomerButtonClick() {
+        disableAllCustomerFields();
         if (currentCustomer == 0) {
             currentCustomer = numberOfCustomers - 1;
         } else {
@@ -322,7 +333,6 @@ public class UserInterfaceController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadComboBoxOptions();
-        disableAllCustomerFields();
         loadCustomersRecords();
         viewAllCustomersButtonClick();
     }
