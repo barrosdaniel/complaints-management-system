@@ -65,7 +65,12 @@ public class UserInterfaceController implements Initializable {
     }
     
     @FXML
-    private void clearAllCustomerFieldsButtonClick() {
+    public void viewAllCustomersButtonClick() {
+        
+    }
+    
+    @FXML
+    public void clearAllCustomerFieldsButtonClick() {
         tfCustomerID.clear();
         tfFirstName.clear();
         tfLastName.clear();
@@ -78,6 +83,7 @@ public class UserInterfaceController implements Initializable {
     
     @FXML
     public void customerSearchLastNameButtonClick() {
+        // TODO: 
         System.out.println("Search by Last Name button clicked.");
         String lastNameInput = tfLastName.getText();
         System.out.println("User entered: " + lastNameInput);
@@ -89,7 +95,7 @@ public class UserInterfaceController implements Initializable {
                 tempCustomersList.add(customer);
             }
         }
-        if (tempCustomersList.size() == 0) {
+        if (tempCustomersList.isEmpty()) {
             System.out.println("No match foudn for " + lastNameInput);
         } else {
             for (Customer customer : tempCustomersList) {
@@ -100,12 +106,14 @@ public class UserInterfaceController implements Initializable {
     
     @FXML
     public void customerSearchContactNumberButtonClick() {
+        // TODO: 
         System.out.println("Search by Contact Number button clicked.");
     }
     
     @FXML
     public void newCustomerButtonClick() {
         nextSaveAction = "New";
+        clearAllCustomerFieldsButtonClick();
         enableAllCustomerFields();
     }
     
@@ -114,11 +122,22 @@ public class UserInterfaceController implements Initializable {
         Customer newCustomer = makeNewCustomerObjectfromUI();
         boolean addedToDatabase = addCustomerToDatabase(newCustomer);
         if (addedToDatabase) {
-            customersList.add(newCustomer);
+            disableAllCustomerFields();
+            customersList.clear();
+            loadCustomersRecords();
+            int indexOfNewCustomer = -1;
+            for (int i = 0; i < customersList.size(); i++) {
+                if (customersList.get(i).getCustomerID().equals(newCustomer.getCustomerID())) {
+                    indexOfNewCustomer = i;
+                    break;
+                }
+            }
+            currentCustomer = indexOfNewCustomer;
+            displayCustomerRecord(currentCustomer);
+            numberOfCustomers = customersList.size();
+            refreshPaginationNumbers("FullSet");
+            nextSaveAction = null;
         }
-        clearAllCustomerFieldsButtonClick();
-        disableAllCustomerFields();
-        nextSaveAction = null;
     }
     
     private Customer makeNewCustomerObjectfromUI() {
@@ -210,26 +229,21 @@ public class UserInterfaceController implements Initializable {
         customerProduct = newCustomer.getCustomerProduct();
         customerType = newCustomer.getCustomerType();
         try (Connection connection = DatabaseHandler.getConnection()) {
-            System.out.println("Connection to Customer database successfull.");
             PreparedStatement insertNewCustomerStatement = connection.prepareStatement(
                 String.format("INSERT INTO customers (custID, fName, lName, mobile, email, addr, product, custType) " +
                 "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');", 
                 customerID, customerFirstName, customerLastName, customerContactNumber,
                 customerEmail, customerAddress, customerProduct, customerType)
             );
-            System.out.println("Query generated successfully.");
             int rowsInserted = insertNewCustomerStatement.executeUpdate();
-            System.out.println("Query executed successfully.");
             if (rowsInserted > 0) {
-                System.out.println("Customer added to the database.");
-                System.out.println(newCustomer);
                 addedToDatabase = true;
             } else {
                 System.out.println("ERROR: Customer record not added to the Customer database.");
             }
             connection.close();
         } catch (Exception e) {
-            System.out.println("Connection to the Customers database failed. Unable to save records to database.");
+            System.out.println("Connection to the Customers database failed. Unable to save Customer to database.");
             e.printStackTrace();
         }
         return addedToDatabase;

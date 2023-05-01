@@ -41,7 +41,7 @@
                               <Font size="16.0" />
                            </font>
                         </TextField>
-                        <Button layoutX="214.0" layoutY="66.0" mnemonicParsing="false" onAction="#customerSearchLastNameButtonClick" prefHeight="25.0" prefWidth="110.0" text="📄 View All">
+                        <Button layoutX="214.0" layoutY="66.0" mnemonicParsing="false" onAction="#viewAllCustomersButtonClick" prefHeight="25.0" prefWidth="110.0" text="📄 View All">
                            <font>
                               <Font size="16.0" />
                            </font>
