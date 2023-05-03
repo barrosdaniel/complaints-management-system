@@ -47,7 +47,7 @@
                               <Font size="16.0" />
                            </font>
                         </Button>
-                        <Button layoutX="329.0" layoutY="56.0" mnemonicParsing="false" onAction="#saveCustomerButtonClick" prefHeight="39.0" prefWidth="91.0" text="👤 Search">
+                        <Button layoutX="329.0" layoutY="56.0" mnemonicParsing="false" onAction="#customerSearchButtonClick" prefHeight="39.0" prefWidth="91.0" text="👤 Search">
                            <font>
                               <Font size="16.0" />
                            </font>

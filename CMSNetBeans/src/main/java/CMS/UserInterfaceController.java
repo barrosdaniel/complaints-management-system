@@ -321,8 +321,36 @@ public class UserInterfaceController implements Initializable {
     // Search Customer Button Handlers
     @FXML
     public void customerSearchButtonClick() {
-        // TODO
-        System.out.println("Customer Search button clicked.");
+        tfCustomerID.clear();
+        tfCustomerID.setEditable(false);
+        tfCustomerID.setStyle("-fx-control-inner-background: #F1F1F1;");
+        tfFirstName.clear();
+        tfFirstName.setEditable(false);
+        tfFirstName.setStyle("-fx-control-inner-background: #F1F1F1;");
+        tfLastName.clear();
+        tfLastName.setEditable(true);
+        tfLastName.setStyle("-fx-control-inner-background: #FFFFFF;");
+        tfContactNumber.clear();
+        tfContactNumber.setEditable(true);
+        tfContactNumber.setStyle("-fx-control-inner-background: #FFFFFF;");
+        tfEmail.clear();
+        tfEmail.setEditable(false);
+        tfEmail.setStyle("-fx-control-inner-background: #F1F1F1;");
+        taAddress.clear();
+        taAddress.setEditable(false);
+        taAddress.setStyle("-fx-control-inner-background: #F1F1F1;");
+        cbProduct.setValue(null);
+        cbProduct.setDisable(true);
+        cbProduct.setStyle("-fx-control-inner-background: #F1F1F1;");
+        cbCustomerType.setValue(null);
+        cbCustomerType.setDisable(true);
+        cbCustomerType.setStyle("-fx-control-inner-background: #F1F1F1;");
+        tfCurrentCustomer.clear();
+        tfCurrentCustomer.setEditable(false);
+        tfCurrentCustomer.setStyle("-fx-control-inner-background: #F1F1F1;");
+        tfTotalCustomers.clear();
+        tfTotalCustomers.setEditable(false);
+        tfTotalCustomers.setStyle("-fx-control-inner-background: #F1F1F1;");
     }
     
     // View All Customer Button Handlers
@@ -353,6 +381,7 @@ public class UserInterfaceController implements Initializable {
     // Customer Contact Number Search Button Handlers
     @FXML
     public void customerSearchContactNumberButtonClick() {
+        // TODO:
         System.out.println("Search by Contact Number button clicked.");
     }
     
