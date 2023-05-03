@@ -116,8 +116,31 @@ public class UserInterfaceController implements Initializable {
     
     @FXML
     public void customerSearchContactNumberButtonClick() {
-        // TODO: 
         System.out.println("Search by Contact Number button clicked.");
+    }
+    
+    @FXML
+    public void nextCustomerButtonClick() {
+        disableAllCustomerFields();
+        if (currentCustomer + 1 == numberOfCustomers) {
+            currentCustomer = 0;
+        } else {
+            currentCustomer++;
+        }
+        displayCustomerRecord(currentCustomer);
+        refreshPaginationNumbers("FullSet");
+    }
+    
+    @FXML
+    public void previousCustomerButtonClick() {
+        disableAllCustomerFields();
+        if (currentCustomer == 0) {
+            currentCustomer = numberOfCustomers - 1;
+        } else {
+            currentCustomer--;
+        }
+        displayCustomerRecord(currentCustomer);
+        refreshPaginationNumbers("FullSet");
     }
     
     @FXML
@@ -130,7 +153,25 @@ public class UserInterfaceController implements Initializable {
     }
     
     @FXML
+    public void editCustomerButtonClick() {
+        nextSaveAction = "Edit";
+        enableAllCustomerFields();
+        tfCustomerID.setEditable(false);
+        tfCustomerID.setStyle("-fx-control-inner-background: #F1F1F1;");
+    }
+    
+    @FXML
     public void saveCustomerButtonClick() {
+        if (tfFirstName.isEditable()) {
+            if (nextSaveAction.equals("New")) {
+                saveNewCustomer();
+            } else {
+                saveEditedCustomer();
+            }
+        }
+    }
+    
+    private void saveNewCustomer() {
         Customer newCustomer = makeNewCustomerObjectfromUI();
         boolean addedToDatabase = addCustomerToDatabase(newCustomer);
         if (addedToDatabase) {
@@ -149,6 +190,18 @@ public class UserInterfaceController implements Initializable {
             numberOfCustomers = customersList.size();
             refreshPaginationNumbers("FullSet");
             nextSaveAction = null;
+        }
+    }
+    
+    private void saveEditedCustomer() {
+        int indexOfEditedCustomer = Integer.parseInt(tfCurrentCustomer.getText()) - 1;
+        Customer originalCustomer = customersList.get(indexOfEditedCustomer);
+        Customer editedCustomer = makeNewCustomerObjectfromUI();
+        if (editedCustomer.equals(originalCustomer)) {
+            System.out.println("ERROR: No changes to save.");
+        } else {
+            removeCustomerFromDatabase(originalCustomer);
+            saveNewCustomer();
         }
     }
     
@@ -261,6 +314,27 @@ public class UserInterfaceController implements Initializable {
         return addedToDatabase;
     }
     
+    private boolean removeCustomerFromDatabase(Customer removedCustomer) {
+        boolean removedFromDatabase = false;
+        customerID = removedCustomer.getCustomerID();
+        try (Connection connection = DatabaseHandler.getConnection()) {
+            PreparedStatement removeCustomerStatement = connection.prepareStatement(
+                String.format("DELETE FROM customers WHERE custID = %s;", customerID)
+            );
+            int rowsDeleted = removeCustomerStatement.executeUpdate();
+            if (rowsDeleted > 0) {
+                removedFromDatabase = true;
+            } else {
+                System.out.println("ERROR: Customer record not deleted from the Customer database.");
+            }
+            connection.close();
+        } catch (Exception e) {
+            System.out.println("Connection to the Customers database failed. Unable to delete Customer from database.");
+            e.printStackTrace();
+        }
+        return removedFromDatabase;
+    }
+    
     private void loadCustomersRecords() {
         try (Connection connection = DatabaseHandler.getConnection()) {
             PreparedStatement getAllCustomersStatement = connection.prepareStatement(
@@ -304,30 +378,6 @@ public class UserInterfaceController implements Initializable {
         cbProduct.setStyle("-fx-opacity: 1.0");
         cbCustomerType.setValue(customer.getCustomerType());
         cbCustomerType.setStyle("-fx-opacity: 1.0");
-    }
-    
-    @FXML
-    public void nextCustomerButtonClick() {
-        disableAllCustomerFields();
-        if (currentCustomer + 1 == numberOfCustomers) {
-            currentCustomer = 0;
-        } else {
-            currentCustomer++;
-        }
-        displayCustomerRecord(currentCustomer);
-        refreshPaginationNumbers("FullSet");
-    }
-    
-    @FXML
-    public void previousCustomerButtonClick() {
-        disableAllCustomerFields();
-        if (currentCustomer == 0) {
-            currentCustomer = numberOfCustomers - 1;
-        } else {
-            currentCustomer--;
-        }
-        displayCustomerRecord(currentCustomer);
-        refreshPaginationNumbers("FullSet");
     }
     
     @Override
