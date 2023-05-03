@@ -88,6 +88,31 @@ public class Customer {
     public void setCustomerProduct(String customerProduct) {
         this.customerProduct = customerProduct;
     }
+    
+    @Override
+    public boolean equals(Object otherCustomerObject) {
+        boolean areEqual = false;
+        if (!(otherCustomerObject instanceof Customer)) {
+            areEqual = false;
+        }
+        if (otherCustomerObject == this) {
+            areEqual = true;
+        }
+        Customer otherCustomer = (Customer) otherCustomerObject;
+        if (
+                this.customerID.equals(otherCustomer.getCustomerID()) &&
+                this.customerFirstName.equals(otherCustomer.getCustomerFirstName()) &&
+                this.customerLastName.equals(otherCustomer.getCustomerLastName()) &&
+                this.customerContactNumber.equals(otherCustomer.getCustomerContactNumber()) &&
+                this.customerEmail.equals(otherCustomer.getCustomerEmail()) &&    
+                this.customerAddress.equals(otherCustomer.getCustomerAddress()) &&    
+                this.customerProduct.equals(otherCustomer.getCustomerProduct()) &&
+                this.customerType.equals(otherCustomer.getCustomerType())
+            ) {
+            areEqual = true;
+        }
+        return areEqual;
+    }
 
     @Override
     public String toString() {
