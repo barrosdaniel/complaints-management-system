@@ -22,6 +22,7 @@ import javafx.scene.control.TextField;
  */
 public class UserInterfaceController implements Initializable {
     
+    // Customer Section UI Controls
     @FXML
     private TextField tfCustomerID;
     @FXML
@@ -43,6 +44,7 @@ public class UserInterfaceController implements Initializable {
     @FXML
     private TextField tfTotalCustomers;
     
+    // Customer Section Variables
     private ArrayList<Customer> customersList = new ArrayList();
     private ArrayList<Customer> tempCustomersList = new ArrayList();
     private ArrayList<Complaint> complaintsList = new ArrayList();
@@ -59,186 +61,10 @@ public class UserInterfaceController implements Initializable {
     private int numberOfCustomers;
     private String nextSaveAction;
     
+    // Customer Helper Methods
     private void loadComboBoxOptions() {
         cbProduct.getItems().addAll("Internet", "Phone", "Billing");
         cbCustomerType.getItems().addAll("Business", "Domestic");
-    }
-    
-    @FXML
-    public void viewAllCustomersButtonClick() {
-        disableAllCustomerFields();
-        currentCustomer = 0;
-        numberOfCustomers = customersList.size();
-        displayCustomerRecord(currentCustomer);
-        refreshPaginationNumbers("FullSet");
-    }
-    
-    @FXML
-    public void clearAllCustomerFieldsButtonClick() {
-        if (tfCustomerID.isEditable()) {
-            clearAllCustomersFields();
-        }
-    }
-    
-    private void clearAllCustomersFields() {
-        tfCustomerID.clear();
-        tfFirstName.clear();
-        tfLastName.clear();
-        tfContactNumber.clear();
-        tfEmail.clear();
-        taAddress.clear();
-        cbProduct.getSelectionModel().clearSelection();
-        cbCustomerType.getSelectionModel().clearSelection();
-    }
-    
-    @FXML
-    public void customerSearchLastNameButtonClick() {
-        // TODO: 
-        System.out.println("Search by Last Name button clicked.");
-        String lastNameInput = tfLastName.getText();
-        System.out.println("User entered: " + lastNameInput);
-        clearAllCustomerFieldsButtonClick();
-        tempCustomersList.clear();
-        for (Customer customer : customersList) {
-            if (customer.getCustomerLastName().contains(lastNameInput)) {
-                System.out.println("Match found for " + lastNameInput);
-                tempCustomersList.add(customer);
-            }
-        }
-        if (tempCustomersList.isEmpty()) {
-            System.out.println("No match foudn for " + lastNameInput);
-        } else {
-            for (Customer customer : tempCustomersList) {
-                System.out.println(customer);
-            }
-        }
-    }
-    
-    @FXML
-    public void customerSearchContactNumberButtonClick() {
-        System.out.println("Search by Contact Number button clicked.");
-    }
-    
-    @FXML
-    public void nextCustomerButtonClick() {
-        disableAllCustomerFields();
-        if (currentCustomer + 1 == numberOfCustomers) {
-            currentCustomer = 0;
-        } else {
-            currentCustomer++;
-        }
-        displayCustomerRecord(currentCustomer);
-        refreshPaginationNumbers("FullSet");
-    }
-    
-    @FXML
-    public void previousCustomerButtonClick() {
-        disableAllCustomerFields();
-        if (currentCustomer == 0) {
-            currentCustomer = numberOfCustomers - 1;
-        } else {
-            currentCustomer--;
-        }
-        displayCustomerRecord(currentCustomer);
-        refreshPaginationNumbers("FullSet");
-    }
-    
-    @FXML
-    public void newCustomerButtonClick() {
-        nextSaveAction = "New";
-        clearAllCustomersFields();
-        enableAllCustomerFields();
-        tfCurrentCustomer.setText(numberOfCustomers + 1 + "");
-        tfTotalCustomers.setText(numberOfCustomers + 1 + "");
-    }
-    
-    @FXML
-    public void editCustomerButtonClick() {
-        nextSaveAction = "Edit";
-        enableAllCustomerFields();
-        tfCustomerID.setEditable(false);
-        tfCustomerID.setStyle("-fx-control-inner-background: #F1F1F1;");
-    }
-    
-    @FXML
-    public void saveCustomerButtonClick() {
-        if (tfFirstName.isEditable()) {
-            if (nextSaveAction.equals("New")) {
-                saveNewCustomer();
-            } else {
-                saveEditedCustomer();
-            }
-        }
-    }
-    
-    private void saveNewCustomer() {
-        Customer newCustomer = makeNewCustomerObjectfromUI();
-        boolean addedToDatabase = addCustomerToDatabase(newCustomer);
-        if (addedToDatabase) {
-            disableAllCustomerFields();
-            customersList.clear();
-            loadCustomersRecords();
-            int indexOfNewCustomer = -1;
-            for (int i = 0; i < customersList.size(); i++) {
-                if (customersList.get(i).getCustomerID().equals(newCustomer.getCustomerID())) {
-                    indexOfNewCustomer = i;
-                    break;
-                }
-            }
-            currentCustomer = indexOfNewCustomer;
-            displayCustomerRecord(currentCustomer);
-            numberOfCustomers = customersList.size();
-            refreshPaginationNumbers("FullSet");
-            nextSaveAction = null;
-        }
-    }
-    
-    private void saveEditedCustomer() {
-        int indexOfEditedCustomer = Integer.parseInt(tfCurrentCustomer.getText()) - 1;
-        Customer originalCustomer = customersList.get(indexOfEditedCustomer);
-        Customer editedCustomer = makeNewCustomerObjectfromUI();
-        if (editedCustomer.equals(originalCustomer)) {
-            System.out.println("ERROR: No changes to save.");
-        } else {
-            removeCustomerFromDatabase(originalCustomer);
-            saveNewCustomer();
-        }
-    }
-    
-    private Customer makeNewCustomerObjectfromUI() {
-        customerID = tfCustomerID.getText();
-        customerFirstName = tfFirstName.getText();
-        customerLastName = tfLastName.getText();
-        customerContactNumber = tfContactNumber.getText();
-        customerContactNumber = removeBlankSpaces(customerContactNumber);
-        customerEmail = tfEmail.getText();
-        customerAddress = taAddress.getText();
-        customerProduct = cbProduct.getValue().toString();
-        customerType = cbCustomerType.getValue().toString();
-        Customer newCustomer = getNewCustomerObject();
-        return newCustomer;
-    }
-    
-    private String removeBlankSpaces (String input) {
-        if (input == null) {
-            return "";
-        } else {
-            String trimmedInput = input.trim();
-            trimmedInput = trimmedInput.replace(" ", "");
-            return trimmedInput;
-        }
-    }
-    
-    private Customer getNewCustomerObject() {
-        return new Customer(
-            customerID,
-            customerFirstName,
-            customerLastName,
-            customerContactNumber,
-            customerEmail,
-            customerAddress,
-            customerType,
-            customerProduct);
     }
     
     private void enableAllCustomerFields() {
@@ -283,6 +109,137 @@ public class UserInterfaceController implements Initializable {
         tfTotalCustomers.setStyle("-fx-control-inner-background: #F1F1F1;");
     }
     
+    private void loadCustomersRecords() {
+        try (Connection connection = DatabaseHandler.getConnection()) {
+            PreparedStatement getAllCustomersStatement = connection.prepareStatement(
+                "SELECT * FROM customers ORDER BY custID;"
+            );
+            ResultSet getAllCustomersQueryResults = getAllCustomersStatement.executeQuery();
+            while (getAllCustomersQueryResults.next()) {
+                customerID = getAllCustomersQueryResults.getString("custID");
+                customerFirstName = getAllCustomersQueryResults.getString("fName");
+                customerLastName = getAllCustomersQueryResults.getString("lName");
+                customerContactNumber = getAllCustomersQueryResults.getString("mobile");
+                customerEmail = getAllCustomersQueryResults.getString("email");
+                customerAddress = getAllCustomersQueryResults.getString("addr");
+                customerType = getAllCustomersQueryResults.getString("custType");
+                customerProduct = getAllCustomersQueryResults.getString("product");
+                Customer newCustomer = getNewCustomerObject();
+                customersList.add(newCustomer);
+            }
+            connection.close();
+        } catch (Exception e) {
+            System.out.println("Connection to the Customers database failed. Unable to load customers from Customers database.");
+        }
+    }
+    
+    private void refreshPaginationNumbers(String set) {
+        if (set.equals("FullSet")); {
+            tfCurrentCustomer.setText(currentCustomer + 1 + "");
+            tfTotalCustomers.setText(numberOfCustomers + "");
+        }
+    }
+    
+    // New Customer Button Handlers
+    @FXML
+    public void newCustomerButtonClick() {
+        nextSaveAction = "New";
+        clearAllCustomersFields();
+        enableAllCustomerFields();
+        tfCurrentCustomer.setText(numberOfCustomers + 1 + "");
+        tfTotalCustomers.setText(numberOfCustomers + 1 + "");
+    }
+    
+    private void clearAllCustomersFields() {
+        tfCustomerID.clear();
+        tfFirstName.clear();
+        tfLastName.clear();
+        tfContactNumber.clear();
+        tfEmail.clear();
+        taAddress.clear();
+        cbProduct.getSelectionModel().clearSelection();
+        cbCustomerType.getSelectionModel().clearSelection();
+    }
+    
+    // Edit Customer Button Handlers
+    @FXML
+    public void editCustomerButtonClick() {
+        nextSaveAction = "Edit";
+        enableAllCustomerFields();
+        tfCustomerID.setEditable(false);
+        tfCustomerID.setStyle("-fx-control-inner-background: #F1F1F1;");
+    }
+    
+    // Save Customer Button Handlers
+    @FXML
+    public void saveCustomerButtonClick() {
+        if (tfFirstName.isEditable()) {
+            if (nextSaveAction.equals("New")) {
+                saveNewCustomer();
+            } else {
+                saveEditedCustomer();
+            }
+        }
+    }
+    
+    private void saveNewCustomer() {
+        Customer newCustomer = makeNewCustomerObjectfromUI();
+        boolean addedToDatabase = addCustomerToDatabase(newCustomer);
+        if (addedToDatabase) {
+            disableAllCustomerFields();
+            customersList.clear();
+            loadCustomersRecords();
+            int indexOfNewCustomer = -1;
+            for (int i = 0; i < customersList.size(); i++) {
+                if (customersList.get(i).getCustomerID().equals(newCustomer.getCustomerID())) {
+                    indexOfNewCustomer = i;
+                    break;
+                }
+            }
+            currentCustomer = indexOfNewCustomer;
+            displayCustomerRecord(currentCustomer);
+            numberOfCustomers = customersList.size();
+            refreshPaginationNumbers("FullSet");
+            nextSaveAction = null;
+        }
+    }
+    
+    private Customer makeNewCustomerObjectfromUI() {
+        customerID = tfCustomerID.getText();
+        customerFirstName = tfFirstName.getText();
+        customerLastName = tfLastName.getText();
+        customerContactNumber = tfContactNumber.getText();
+        customerContactNumber = removeBlankSpaces(customerContactNumber);
+        customerEmail = tfEmail.getText();
+        customerAddress = taAddress.getText();
+        customerProduct = cbProduct.getValue().toString();
+        customerType = cbCustomerType.getValue().toString();
+        Customer newCustomer = getNewCustomerObject();
+        return newCustomer;
+    }
+    
+    private String removeBlankSpaces (String input) {
+        if (input == null) {
+            return "";
+        } else {
+            String trimmedInput = input.trim();
+            trimmedInput = trimmedInput.replace(" ", "");
+            return trimmedInput;
+        }
+    }
+    
+    private Customer getNewCustomerObject() {
+        return new Customer(
+            customerID,
+            customerFirstName,
+            customerLastName,
+            customerContactNumber,
+            customerEmail,
+            customerAddress,
+            customerType,
+            customerProduct);
+    }
+    
     private boolean addCustomerToDatabase(Customer newCustomer) {
         boolean addedToDatabase = false;
         customerID = newCustomer.getCustomerID();
@@ -314,6 +271,32 @@ public class UserInterfaceController implements Initializable {
         return addedToDatabase;
     }
     
+    private void displayCustomerRecord(int index) {
+        Customer customer = customersList.get(index);
+        tfCustomerID.setText(customer.getCustomerID());
+        tfFirstName.setText(customer.getCustomerFirstName());
+        tfLastName.setText(customer.getCustomerLastName());
+        tfContactNumber.setText(customer.getCustomerContactNumber());
+        tfEmail.setText(customer.getCustomerEmail());
+        taAddress.setText(customer.getCustomerAddress());
+        cbProduct.setValue(customer.getCustomerProduct());
+        cbProduct.setStyle("-fx-opacity: 1.0");
+        cbCustomerType.setValue(customer.getCustomerType());
+        cbCustomerType.setStyle("-fx-opacity: 1.0");
+    }
+    
+    private void saveEditedCustomer() {
+        int indexOfEditedCustomer = Integer.parseInt(tfCurrentCustomer.getText()) - 1;
+        Customer originalCustomer = customersList.get(indexOfEditedCustomer);
+        Customer editedCustomer = makeNewCustomerObjectfromUI();
+        if (editedCustomer.equals(originalCustomer)) {
+            System.out.println("ERROR: No changes to save.");
+        } else {
+            removeCustomerFromDatabase(originalCustomer);
+            saveNewCustomer();
+        }
+    }
+    
     private boolean removeCustomerFromDatabase(Customer removedCustomer) {
         boolean removedFromDatabase = false;
         customerID = removedCustomer.getCustomerID();
@@ -335,49 +318,68 @@ public class UserInterfaceController implements Initializable {
         return removedFromDatabase;
     }
     
-    private void loadCustomersRecords() {
-        try (Connection connection = DatabaseHandler.getConnection()) {
-            PreparedStatement getAllCustomersStatement = connection.prepareStatement(
-                "SELECT * FROM customers ORDER BY custID;"
-            );
-            ResultSet getAllCustomersQueryResults = getAllCustomersStatement.executeQuery();
-            while (getAllCustomersQueryResults.next()) {
-                customerID = getAllCustomersQueryResults.getString("custID");
-                customerFirstName = getAllCustomersQueryResults.getString("fName");
-                customerLastName = getAllCustomersQueryResults.getString("lName");
-                customerContactNumber = getAllCustomersQueryResults.getString("mobile");
-                customerEmail = getAllCustomersQueryResults.getString("email");
-                customerAddress = getAllCustomersQueryResults.getString("addr");
-                customerType = getAllCustomersQueryResults.getString("custType");
-                customerProduct = getAllCustomersQueryResults.getString("product");
-                Customer newCustomer = getNewCustomerObject();
-                customersList.add(newCustomer);
-            }
-            connection.close();
-        } catch (Exception e) {
-            System.out.println("Connection to the Customers database failed. Unable to load customers from Customers database.");
-        }
+    // Search Customer Button Handlers
+    @FXML
+    public void customerSearchButtonClick() {
+        // TODO
+        System.out.println("Customer Search button clicked.");
     }
-
-    private void refreshPaginationNumbers(String set) {
-        if (set.equals("FullSet")); {
-            tfCurrentCustomer.setText(currentCustomer + 1 + "");
-            tfTotalCustomers.setText(numberOfCustomers + "");
+    
+    // View All Customer Button Handlers
+    @FXML
+    public void viewAllCustomersButtonClick() {
+        disableAllCustomerFields();
+        currentCustomer = 0;
+        numberOfCustomers = customersList.size();
+        displayCustomerRecord(currentCustomer);
+        refreshPaginationNumbers("FullSet");
+    }
+    
+    // Clear Customer Button Handlers
+    @FXML
+    public void clearAllCustomerFieldsButtonClick() {
+        if (tfCustomerID.isEditable()) {
+            clearAllCustomersFields();
         }
     }
     
-    private void displayCustomerRecord(int index) {
-        Customer customer = customersList.get(index);
-        tfCustomerID.setText(customer.getCustomerID());
-        tfFirstName.setText(customer.getCustomerFirstName());
-        tfLastName.setText(customer.getCustomerLastName());
-        tfContactNumber.setText(customer.getCustomerContactNumber());
-        tfEmail.setText(customer.getCustomerEmail());
-        taAddress.setText(customer.getCustomerAddress());
-        cbProduct.setValue(customer.getCustomerProduct());
-        cbProduct.setStyle("-fx-opacity: 1.0");
-        cbCustomerType.setValue(customer.getCustomerType());
-        cbCustomerType.setStyle("-fx-opacity: 1.0");
+    // Customer Last Name Search Button Handlers
+    @FXML
+    public void customerSearchLastNameButtonClick() {
+        // TODO: 
+        System.out.println("Search by Last Name button clicked.");
+    }
+    
+    // Customer Contact Number Search Button Handlers
+    @FXML
+    public void customerSearchContactNumberButtonClick() {
+        System.out.println("Search by Contact Number button clicked.");
+    }
+    
+    // Previous Customer Button Handlers
+    @FXML
+    public void previousCustomerButtonClick() {
+        disableAllCustomerFields();
+        if (currentCustomer == 0) {
+            currentCustomer = numberOfCustomers - 1;
+        } else {
+            currentCustomer--;
+        }
+        displayCustomerRecord(currentCustomer);
+        refreshPaginationNumbers("FullSet");
+    }
+    
+    // Next Customer Button Handlers
+    @FXML
+    public void nextCustomerButtonClick() {
+        disableAllCustomerFields();
+        if (currentCustomer + 1 == numberOfCustomers) {
+            currentCustomer = 0;
+        } else {
+            currentCustomer++;
+        }
+        displayCustomerRecord(currentCustomer);
+        refreshPaginationNumbers("FullSet");
     }
     
     @Override
