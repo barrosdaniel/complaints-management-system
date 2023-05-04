@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -164,10 +165,19 @@ public class UserInterfaceController implements Initializable {
     // Edit Customer Button Handlers
     @FXML
     public void editCustomerButtonClick() {
-        nextSaveAction = "Edit";
-        enableAllCustomerFields();
-        tfCustomerID.setEditable(false);
-        tfCustomerID.setStyle("-fx-control-inner-background: #F1F1F1;");
+        if (customerSet.equals("FullSet")) {
+            nextSaveAction = "Edit";
+            enableAllCustomerFields();
+            tfCustomerID.setEditable(false);
+            tfCustomerID.setStyle("-fx-control-inner-background: #F1F1F1;");
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Cannot edit in Search");
+            alert.setContentText("Customer edit is not allowed whilst in Search mode. " + 
+                    "Please click the 'View All' button to return to View mode, then " +
+                    "try again.");
+            alert.showAndWait();
+        }
     }
     
     // Save Customer Button Handlers
@@ -201,6 +211,7 @@ public class UserInterfaceController implements Initializable {
             numberOfCustomers = customersList.size();
             refreshPaginationNumbers();
             nextSaveAction = null;
+            displaySavedCustomerAlert();
         }
     }
     
@@ -290,37 +301,65 @@ public class UserInterfaceController implements Initializable {
         cbCustomerType.setStyle("-fx-opacity: 1.0");
     }
     
+    private void displaySavedCustomerAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Customer saved");
+        alert.setContentText("Customer record saved successfully.");
+        alert.showAndWait();
+    }
+    
     private void saveEditedCustomer() {
         int indexOfEditedCustomer = Integer.parseInt(tfCurrentCustomer.getText()) - 1;
         Customer originalCustomer = customersList.get(indexOfEditedCustomer);
         Customer editedCustomer = makeNewCustomerObjectfromUI();
         if (editedCustomer.equals(originalCustomer)) {
-            System.out.println("ERROR: No changes to save.");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No changes to Save");
+            alert.setContentText("The customer record you are trying to save has no changes.");
+            alert.showAndWait();
         } else {
-            removeCustomerFromDatabase(originalCustomer);
-            saveNewCustomer();
+            if (alterCustomerInDatabase(editedCustomer)) {
+                customersList.set(indexOfEditedCustomer, editedCustomer);
+                disableAllCustomerFields();
+                nextSaveAction = null;
+                displaySavedCustomerAlert();
+            };
         }
     }
     
-    private boolean removeCustomerFromDatabase(Customer removedCustomer) {
-        boolean removedFromDatabase = false;
-        customerID = removedCustomer.getCustomerID();
+    private boolean alterCustomerInDatabase(Customer editedCustomer) {
+        boolean editedInDatabase = false;
+        customerID = editedCustomer.getCustomerID();
+        customerFirstName = editedCustomer.getCustomerFirstName();
+        customerLastName = editedCustomer.getCustomerLastName();
+        customerContactNumber = editedCustomer.getCustomerContactNumber();
+        customerEmail = editedCustomer.getCustomerEmail();
+        customerAddress = editedCustomer.getCustomerAddress();
+        customerProduct = editedCustomer.getCustomerProduct();
+        customerType = editedCustomer.getCustomerType();
         try (Connection connection = DatabaseHandler.getConnection()) {
-            PreparedStatement removeCustomerStatement = connection.prepareStatement(
-                String.format("DELETE FROM customers WHERE custID = %s;", customerID)
+            PreparedStatement editCustomerStatement = connection.prepareStatement(
+             String.format(
+          "UPDATE customers SET fname = '%s', lName = '%s', mobile = '%s', email = '%s', addr = '%s', custType = '%s', product = '%s' WHERE custID = %s;",
+            customerFirstName, customerLastName, customerContactNumber, customerEmail, customerAddress, customerProduct, customerType, customerID)
             );
-            int rowsDeleted = removeCustomerStatement.executeUpdate();
+            int rowsDeleted = editCustomerStatement.executeUpdate();
             if (rowsDeleted > 0) {
-                removedFromDatabase = true;
+                editedInDatabase = true;
             } else {
-                System.out.println("ERROR: Customer record not deleted from the Customer database.");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Customer not edited in database.");
+                alert.setContentText("The customer record cannot be edited in the database.");
+                alert.showAndWait();
             }
             connection.close();
         } catch (Exception e) {
-            System.out.println("Connection to the Customers database failed. Unable to delete Customer from database.");
-            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Customer not edited in database.");
+            alert.setContentText("Unable to connect to the database. Customer record not edited in database.");
+            alert.showAndWait();
         }
-        return removedFromDatabase;
+        return editedInDatabase;
     }
     
     // Search Customer Button Handlers
@@ -381,6 +420,10 @@ public class UserInterfaceController implements Initializable {
     // Customer Last Name Search Button Handlers
     @FXML
     public void customerSearchLastNameButtonClick() {
+        if (customerSet.equals("FullSet")) {
+            displayIncorrectSearchAlert();
+            return;
+        }
         boolean matchFound = false;
         tempCustomersList.clear();
         String lastNameInput = tfLastName.getText();
@@ -405,7 +448,10 @@ public class UserInterfaceController implements Initializable {
     // Customer Contact Number Search Button Handlers
     @FXML
     public void customerSearchContactNumberButtonClick() {
-        System.out.println("Search by Contact Number button clicked.");
+        if (customerSet.equals("FullSet")) {
+            displayIncorrectSearchAlert();
+            return;
+        }
         boolean matchFound = false;
         tempCustomersList.clear();
         String contactNumberInput = tfContactNumber.getText();
@@ -425,6 +471,14 @@ public class UserInterfaceController implements Initializable {
             displayCustomerRecord(currentCustomer);
             refreshPaginationNumbers();
         }
+    }
+    
+    private void displayIncorrectSearchAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Search not allowed in View mode.");
+        alert.setContentText("Searching for a customer is now allowed in View mode. " + 
+            "Please click the 'Customer Search' button first, to start a search.");
+        alert.showAndWait();
     }
     
     // Previous Customer Button Handlers
