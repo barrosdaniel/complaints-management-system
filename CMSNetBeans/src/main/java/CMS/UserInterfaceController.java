@@ -384,9 +384,10 @@ public class UserInterfaceController implements Initializable {
         boolean matchFound = false;
         tempCustomersList.clear();
         String lastNameInput = tfLastName.getText();
+        String iteratingCustomerLastName;
         for (int i = 0; i < customersList.size(); i++) {
             iteratingCustomer = customersList.get(i);
-            String iteratingCustomerLastName = iteratingCustomer.getCustomerLastName();
+            iteratingCustomerLastName = iteratingCustomer.getCustomerLastName();
             if (iteratingCustomerLastName.contains(lastNameInput)) {
                 tempCustomersList.add(iteratingCustomer);
                 matchFound = true;
@@ -404,8 +405,26 @@ public class UserInterfaceController implements Initializable {
     // Customer Contact Number Search Button Handlers
     @FXML
     public void customerSearchContactNumberButtonClick() {
-        // TODO:
         System.out.println("Search by Contact Number button clicked.");
+        boolean matchFound = false;
+        tempCustomersList.clear();
+        String contactNumberInput = tfContactNumber.getText();
+        String iteratingCustomerContactNumber;
+        for (int i = 0; i < customersList.size(); i++) {
+            iteratingCustomer = customersList.get(i);
+            iteratingCustomerContactNumber = iteratingCustomer.getCustomerContactNumber();
+            if (iteratingCustomerContactNumber.contains(contactNumberInput)) {
+                tempCustomersList.add(iteratingCustomer);
+                matchFound = true;
+            }
+        }
+        if (matchFound) {
+            disableAllCustomerFields();
+            currentCustomer = 0;
+            numberOfCustomers = tempCustomersList.size();
+            displayCustomerRecord(currentCustomer);
+            refreshPaginationNumbers();
+        }
     }
     
     // Previous Customer Button Handlers
