@@ -45,10 +45,10 @@ public class UserInterfaceController implements Initializable {
     private TextField tfTotalCustomers;
     
     // Customer Section Variables
-    private ArrayList<Customer> customersList = new ArrayList();
-    private ArrayList<Customer> tempCustomersList = new ArrayList();
-    private ArrayList<Complaint> complaintsList = new ArrayList();
-    private ArrayList<Complaint> tempComplaintsList = new ArrayList();
+    private final ArrayList<Customer> customersList = new ArrayList();
+    private final ArrayList<Customer> tempCustomersList = new ArrayList();
+    private final ArrayList<Complaint> complaintsList = new ArrayList();
+    private final ArrayList<Complaint> tempComplaintsList = new ArrayList();
     private String customerID;
     private String customerFirstName;
     private String customerLastName;
@@ -60,6 +60,8 @@ public class UserInterfaceController implements Initializable {
     private int currentCustomer;
     private int numberOfCustomers;
     private String nextSaveAction;
+    private String customerSet;
+    private Customer iteratingCustomer;
     
     // Customer Helper Methods
     private void loadComboBoxOptions() {
@@ -133,11 +135,9 @@ public class UserInterfaceController implements Initializable {
         }
     }
     
-    private void refreshPaginationNumbers(String set) {
-        if (set.equals("FullSet")); {
-            tfCurrentCustomer.setText(currentCustomer + 1 + "");
-            tfTotalCustomers.setText(numberOfCustomers + "");
-        }
+    private void refreshPaginationNumbers() {
+        tfCurrentCustomer.setText(currentCustomer + 1 + "");
+        tfTotalCustomers.setText(numberOfCustomers + "");
     }
     
     // New Customer Button Handlers
@@ -199,7 +199,7 @@ public class UserInterfaceController implements Initializable {
             currentCustomer = indexOfNewCustomer;
             displayCustomerRecord(currentCustomer);
             numberOfCustomers = customersList.size();
-            refreshPaginationNumbers("FullSet");
+            refreshPaginationNumbers();
             nextSaveAction = null;
         }
     }
@@ -272,7 +272,12 @@ public class UserInterfaceController implements Initializable {
     }
     
     private void displayCustomerRecord(int index) {
-        Customer customer = customersList.get(index);
+        Customer customer;
+        if (customerSet.equals("FullSet")) {
+            customer = customersList.get(index);
+        } else {
+            customer = tempCustomersList.get(index);
+        }
         tfCustomerID.setText(customer.getCustomerID());
         tfFirstName.setText(customer.getCustomerFirstName());
         tfLastName.setText(customer.getCustomerLastName());
@@ -351,16 +356,18 @@ public class UserInterfaceController implements Initializable {
         tfTotalCustomers.clear();
         tfTotalCustomers.setEditable(false);
         tfTotalCustomers.setStyle("-fx-control-inner-background: #F1F1F1;");
+        customerSet = "SearchSet";
     }
     
     // View All Customer Button Handlers
     @FXML
     public void viewAllCustomersButtonClick() {
+        customerSet = "FullSet";
         disableAllCustomerFields();
         currentCustomer = 0;
         numberOfCustomers = customersList.size();
         displayCustomerRecord(currentCustomer);
-        refreshPaginationNumbers("FullSet");
+        refreshPaginationNumbers();
     }
     
     // Clear Customer Button Handlers
@@ -374,8 +381,24 @@ public class UserInterfaceController implements Initializable {
     // Customer Last Name Search Button Handlers
     @FXML
     public void customerSearchLastNameButtonClick() {
-        // TODO: 
-        System.out.println("Search by Last Name button clicked.");
+        boolean matchFound = false;
+        tempCustomersList.clear();
+        String lastNameInput = tfLastName.getText();
+        for (int i = 0; i < customersList.size(); i++) {
+            iteratingCustomer = customersList.get(i);
+            String iteratingCustomerLastName = iteratingCustomer.getCustomerLastName();
+            if (iteratingCustomerLastName.contains(lastNameInput)) {
+                tempCustomersList.add(iteratingCustomer);
+                matchFound = true;
+            }
+        }
+        if (matchFound) {
+            disableAllCustomerFields();
+            currentCustomer = 0;
+            numberOfCustomers = tempCustomersList.size();
+            displayCustomerRecord(currentCustomer);
+            refreshPaginationNumbers();
+        }
     }
     
     // Customer Contact Number Search Button Handlers
@@ -395,7 +418,7 @@ public class UserInterfaceController implements Initializable {
             currentCustomer--;
         }
         displayCustomerRecord(currentCustomer);
-        refreshPaginationNumbers("FullSet");
+        refreshPaginationNumbers();
     }
     
     // Next Customer Button Handlers
@@ -408,7 +431,7 @@ public class UserInterfaceController implements Initializable {
             currentCustomer++;
         }
         displayCustomerRecord(currentCustomer);
-        refreshPaginationNumbers("FullSet");
+        refreshPaginationNumbers();
     }
     
     @Override
