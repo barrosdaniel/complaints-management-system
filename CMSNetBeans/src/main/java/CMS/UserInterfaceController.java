@@ -23,6 +23,16 @@ import javafx.scene.control.TextField;
  */
 public class UserInterfaceController implements Initializable {
     
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        loadComboBoxOptions();
+        loadCustomersRecords();
+        viewAllCustomersButtonClick();
+    }
+    
+/* =============================================================================
+CUSTOMERS
+============================================================================= */
     // Customer Section UI Controls
     @FXML
     private TextField tfCustomerID;
@@ -48,8 +58,6 @@ public class UserInterfaceController implements Initializable {
     // Customer Section Variables
     private final ArrayList<Customer> customersList = new ArrayList();
     private final ArrayList<Customer> tempCustomersList = new ArrayList();
-    private final ArrayList<Complaint> complaintsList = new ArrayList();
-    private final ArrayList<Complaint> tempComplaintsList = new ArrayList();
     private String customerID;
     private String customerFirstName;
     private String customerLastName;
@@ -64,7 +72,7 @@ public class UserInterfaceController implements Initializable {
     private String customerSet;
     private Customer iteratingCustomer;
     
-    // Customer Helper Methods
+// Customer Helper Methods
     private void loadComboBoxOptions() {
         cbProduct.getItems().addAll("Internet", "Phone", "Billing");
         cbCustomerType.getItems().addAll("Business", "Domestic");
@@ -507,10 +515,13 @@ public class UserInterfaceController implements Initializable {
         refreshPaginationNumbers();
     }
     
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        loadComboBoxOptions();
-        loadCustomersRecords();
-        viewAllCustomersButtonClick();
-    }
+/* =============================================================================
+COMPLAINTS
+============================================================================= */    
+    // Customer Section UI Controls
+    
+    
+    // Customer Section Variables
+    private final ArrayList<Complaint> complaintsList = new ArrayList();
+    private final ArrayList<Complaint> tempComplaintsList = new ArrayList();
 }
