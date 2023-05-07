@@ -24,7 +24,7 @@
       </Label>
       <TabPane layoutY="56.0" prefHeight="844.0" prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0">
         <tabs>
-          <Tab text="Customers">
+          <Tab text="Customers / Complaints">
                <content>
                   <Pane prefHeight="827.0" prefWidth="448.0">
                      <children>
@@ -209,27 +209,22 @@
                               <Font size="16.0" />
                            </font>
                         </Button>
-                        <Label alignment="BOTTOM_LEFT" contentDisplay="TOP" graphicTextGap="0.0" layoutX="461.0" layoutY="179.0" prefHeight="29.0" prefWidth="340.0" text="Customer ID">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                        <TextField layoutX="461.0" layoutY="208.0" prefHeight="27.0" prefWidth="340.0">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </TextField>
                         <Label alignment="BOTTOM_LEFT" contentDisplay="TOP" graphicTextGap="0.0" layoutX="461.0" layoutY="105.0" prefHeight="29.0" prefWidth="340.0" text="Complaint ID">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField layoutX="461.0" layoutY="134.0" prefHeight="27.0" prefWidth="340.0">
+                        <TextField fx:id="tfComplaintID" layoutX="461.0" layoutY="134.0" prefHeight="35.0" prefWidth="240.0">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </TextField>
-                        <Button layoutX="821.0" layoutY="134.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="📄   View All">
+                        <Button layoutX="711.0" layoutY="134.0" mnemonicParsing="false" onAction="#customerSearchLastNameButtonClick" prefHeight="25.0" prefWidth="90.0" text="🔍 Search">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="821.0" layoutY="134.0" mnemonicParsing="false" onAction="#viewAllComplaintsButtonClick" prefHeight="25.0" prefWidth="160.0" text="📄   View All">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -239,12 +234,27 @@
                               <Font size="16.0" />
                            </font>
                         </Button>
+                        <Label alignment="BOTTOM_LEFT" contentDisplay="TOP" graphicTextGap="0.0" layoutX="461.0" layoutY="179.0" prefHeight="29.0" prefWidth="340.0" text="Customer ID">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="tfComplaintsCustomerID" layoutX="461.0" layoutY="208.0" prefHeight="35.0" prefWidth="240.0">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </TextField>
+                        <Button layoutX="711.0" layoutY="208.0" mnemonicParsing="false" onAction="#customerSearchLastNameButtonClick" prefHeight="25.0" prefWidth="90.0" text="🔍 Search">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
                         <Label alignment="BOTTOM_LEFT" contentDisplay="TOP" graphicTextGap="0.0" layoutX="821.0" layoutY="179.0" prefHeight="29.0" prefWidth="160.0" text="Complaint Date">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <DatePicker layoutX="821.0" layoutY="208.0" prefHeight="35.0" prefWidth="340.0" />
+                        <DatePicker fx:id="dpComplaintDate" layoutX="821.0" layoutY="208.0" prefHeight="35.0" prefWidth="340.0" />
                         <HBox layoutX="461.0" layoutY="284.0" prefHeight="32.0" prefWidth="340.0">
                            <children>
                               <Label contentDisplay="TOP" prefHeight="34.0" prefWidth="179.0" text="Service Type">
@@ -252,7 +262,7 @@
                                     <Font size="16.0" />
                                  </font>
                               </Label>
-                              <ComboBox prefHeight="32.0" prefWidth="163.0" promptText="Select service type" />
+                              <ComboBox fx:id="cbServiceType" prefHeight="32.0" prefWidth="163.0" promptText="Select service type" />
                            </children>
                         </HBox>
                         <HBox layoutX="821.0" layoutY="284.0" prefHeight="32.0" prefWidth="340.0">
@@ -262,7 +272,7 @@
                                     <Font size="16.0" />
                                  </font>
                               </Label>
-                              <ComboBox prefHeight="32.0" prefWidth="163.0" promptText="Select status" />
+                              <ComboBox fx:id="cbComplaintStatus" prefHeight="32.0" prefWidth="163.0" promptText="Select status" />
                            </children>
                         </HBox>
                         <Label alignment="BOTTOM_LEFT" contentDisplay="TOP" graphicTextGap="0.0" layoutX="461.0" layoutY="327.0" prefHeight="29.0" prefWidth="700.0" text="Problem Description">
@@ -270,7 +280,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextArea layoutX="461.0" layoutY="356.0" prefHeight="109.0" prefWidth="700.0">
+                        <TextArea fx:id="taProblemDescription" layoutX="461.0" layoutY="356.0" prefHeight="109.0" prefWidth="700.0">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -280,7 +290,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextArea layoutX="461.0" layoutY="504.0" prefHeight="211.0" prefWidth="700.0">
+                        <TextArea fx:id="taServiceNotes" layoutX="461.0" layoutY="504.0" prefHeight="211.0" prefWidth="700.0">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -290,7 +300,7 @@
                               <Font size="16.0" />
                            </font>
                         </Button>
-                        <TextField layoutX="856.0" layoutY="760.0" prefHeight="22.0" prefWidth="50.0">
+                        <TextField fx:id="tfCurrentComplaint" layoutX="856.0" layoutY="760.0" prefHeight="22.0" prefWidth="50.0">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -300,7 +310,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField layoutX="956.0" layoutY="760.0" prefHeight="22.0" prefWidth="50.0">
+                        <TextField fx:id="tfTotalComplaint" layoutX="956.0" layoutY="760.0" prefHeight="22.0" prefWidth="50.0">
                            <font>
                               <Font size="16.0" />
                            </font>
