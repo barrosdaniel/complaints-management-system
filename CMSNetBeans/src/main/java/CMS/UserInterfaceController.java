@@ -7,12 +7,14 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
@@ -25,9 +27,12 @@ public class UserInterfaceController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        loadComboBoxOptions();
+        loadCustomerComboBoxOptions();
+        loadComplaintComboBoxOptions();
         loadCustomersRecords();
+        loadComplaintsRecords();
         viewAllCustomersButtonClick();
+        viewAllComplaintsButtonClick();
     }
     
 /* =============================================================================
@@ -73,7 +78,7 @@ CUSTOMERS
     private Customer iteratingCustomer;
     
 // Customer Helper Methods
-    private void loadComboBoxOptions() {
+    private void loadCustomerComboBoxOptions() {
         cbProduct.getItems().addAll("Internet", "Phone", "Billing");
         cbCustomerType.getItems().addAll("Business", "Domestic");
     }
@@ -144,7 +149,7 @@ CUSTOMERS
         }
     }
     
-    private void refreshPaginationNumbers() {
+    private void refreshCustomerPaginationNumbers() {
         tfCurrentCustomer.setText(currentCustomer + 1 + "");
         tfTotalCustomers.setText(numberOfCustomers + "");
     }
@@ -217,7 +222,7 @@ CUSTOMERS
             currentCustomer = indexOfNewCustomer;
             displayCustomerRecord(currentCustomer);
             numberOfCustomers = customersList.size();
-            refreshPaginationNumbers();
+            refreshCustomerPaginationNumbers();
             nextSaveAction = null;
             displaySavedCustomerAlert();
         }
@@ -414,7 +419,7 @@ CUSTOMERS
         currentCustomer = 0;
         numberOfCustomers = customersList.size();
         displayCustomerRecord(currentCustomer);
-        refreshPaginationNumbers();
+        refreshCustomerPaginationNumbers();
     }
     
     // Clear Customer Button Handlers
@@ -449,7 +454,7 @@ CUSTOMERS
             currentCustomer = 0;
             numberOfCustomers = tempCustomersList.size();
             displayCustomerRecord(currentCustomer);
-            refreshPaginationNumbers();
+            refreshCustomerPaginationNumbers();
         }
     }
     
@@ -477,7 +482,7 @@ CUSTOMERS
             currentCustomer = 0;
             numberOfCustomers = tempCustomersList.size();
             displayCustomerRecord(currentCustomer);
-            refreshPaginationNumbers();
+            refreshCustomerPaginationNumbers();
         }
     }
     
@@ -499,7 +504,7 @@ CUSTOMERS
             currentCustomer--;
         }
         displayCustomerRecord(currentCustomer);
-        refreshPaginationNumbers();
+        refreshCustomerPaginationNumbers();
     }
     
     // Next Customer Button Handlers
@@ -512,16 +517,159 @@ CUSTOMERS
             currentCustomer++;
         }
         displayCustomerRecord(currentCustomer);
-        refreshPaginationNumbers();
+        refreshCustomerPaginationNumbers();
     }
     
 /* =============================================================================
 COMPLAINTS
 ============================================================================= */    
     // Customer Section UI Controls
-    
+    @FXML
+    private TextField tfComplaintID;
+    @FXML
+    private TextField tfComplaintsCustomerID;
+    @FXML
+    private DatePicker dpComplaintDate;
+    @FXML
+    private ComboBox cbServiceType;
+    @FXML
+    private ComboBox cbComplaintStatus;
+    @FXML
+    private TextArea taProblemDescription;
+    @FXML
+    private TextArea taServiceNotes;
+    @FXML
+    private TextField tfCurrentComplaint;
+    @FXML
+    private TextField tfTotalComplaint;
     
     // Customer Section Variables
     private final ArrayList<Complaint> complaintsList = new ArrayList();
     private final ArrayList<Complaint> tempComplaintsList = new ArrayList();
+    private String complaintID;
+    private String complaintsCustomerID;
+    private LocalDate complaintDate;
+    private String complaintServiceType;
+    private String complaintStatus;
+    private String problemDescription;
+    private String serviceNotes;
+    private int currentComplaint;
+    private int numberOfComplaints;
+    private String nextComplaintSaveAction;
+    private String complaintSet;
+    private Customer iteratingComplaint;
+    
+    // Complaint Helper Methods
+    private void loadComplaintComboBoxOptions() {
+        cbServiceType.getItems().addAll("Internet", "Phone", "Billing");
+        cbComplaintStatus.getItems().addAll("Received", "Allocated", "Started", "Resolved", "Pending", "Cancelled");
+    }
+    
+    private void enableAllComplaintsFields() {
+        tfComplaintsCustomerID.setEditable(true);
+        tfComplaintsCustomerID.setStyle("-fx-control-inner-background: #FFFFFF;");
+        dpComplaintDate.setEditable(true);
+        dpComplaintDate.setStyle("-fx-control-inner-background: #FFFFFF;");
+        cbServiceType.setDisable(false);
+        cbServiceType.setStyle("-fx-control-inner-background: #FFFFFF;");
+        cbComplaintStatus.setDisable(false);
+        cbComplaintStatus.setStyle("-fx-control-inner-background: #FFFFFF;");
+        taProblemDescription.setEditable(true);
+        taProblemDescription.setStyle("-fx-control-inner-background: #FFFFFF;");
+        taServiceNotes.setEditable(true);
+        taServiceNotes.setStyle("-fx-control-inner-background: #FFFFFF;");
+    }
+    
+    private void disableAllComplaintsFields() {
+        tfComplaintID.setEditable(false);
+        tfComplaintID.setStyle("-fx-control-inner-background: #F1F1F1;");
+        tfComplaintsCustomerID.setEditable(false);
+        tfComplaintsCustomerID.setStyle("-fx-control-inner-background: #F1F1F1;");
+        dpComplaintDate.setEditable(false);
+        dpComplaintDate.setStyle("-fx-control-inner-background: #F1F1F1;");
+        cbServiceType.setDisable(true);
+        cbServiceType.setStyle("-fx-control-inner-background: #F1F1F1;");
+        cbComplaintStatus.setDisable(true);
+        cbComplaintStatus.setStyle("-fx-control-inner-background: #F1F1F1;");
+        taProblemDescription.setEditable(false);
+        taProblemDescription.setStyle("-fx-control-inner-background: #F1F1F1;");
+        taServiceNotes.setEditable(false);
+        taServiceNotes.setStyle("-fx-control-inner-background: #F1F1F1;");
+        tfCurrentComplaint.setEditable(false);
+        tfCurrentComplaint.setStyle("-fx-control-inner-background: #F1F1F1;");
+        tfTotalComplaint.setEditable(false);
+        tfTotalComplaint.setStyle("-fx-control-inner-background: #F1F1F1;");
+    }
+
+    private void loadComplaintsRecords() {
+        try (Connection connection = DatabaseHandler.getConnection()) {
+            PreparedStatement getAllComplaintsStatement = connection.prepareStatement(
+                "SELECT * FROM complaints ORDER BY compID;"
+            );
+            ResultSet getAllComplaintsQueryResults = getAllComplaintsStatement.executeQuery();
+            while (getAllComplaintsQueryResults.next()) {
+                complaintID = getAllComplaintsQueryResults.getString("compID");
+                complaintsCustomerID = getAllComplaintsQueryResults.getString("custID");
+                String date = getAllComplaintsQueryResults.getString("compDate");
+                complaintDate = LocalDate.parse(date);
+                complaintServiceType = getAllComplaintsQueryResults.getString("serviceType");
+                complaintStatus = getAllComplaintsQueryResults.getString("compStatus");
+                problemDescription = getAllComplaintsQueryResults.getString("problemDesc");
+                serviceNotes = getAllComplaintsQueryResults.getString("serviceNotes");
+                Complaint newComplaint = getNewComplaintObject();
+                complaintsList.add(newComplaint);
+            }
+            connection.close();
+        } catch (Exception e) {
+            System.out.println("Connection to the Complaints database failed. Unable to load complaints from Complaints database.");
+        }
+    }
+    
+    private void refreshComplaintPaginationNumbers() {
+        tfCurrentComplaint.setText(currentComplaint + 1 + "");
+        tfTotalComplaint.setText(numberOfComplaints + "");
+    }
+    
+    // Save Customer Button Handlers
+    private void displayComplaintRecord(int index) {
+        Complaint complaint;
+        if (complaintSet.equals("FullSet")) {
+            complaint = complaintsList.get(index);
+        } else {
+            complaint = tempComplaintsList.get(index);
+        }
+        tfComplaintID.setText(complaint.getComplaintID());
+        tfComplaintsCustomerID.setText(complaint.getComplaintsCustomerID());
+        dpComplaintDate.setValue(complaint.getComplaintDate());
+        cbServiceType.setValue(complaint.getComplaintServiceType());
+        cbServiceType.setStyle("-fx-opacity: 1.0");
+        cbComplaintStatus.setValue(complaint.getComplaintStatus());
+        cbComplaintStatus.setStyle("-fx-opacity: 1.0");
+        taProblemDescription.setText(complaint.getProblemDescription());
+        taServiceNotes.setText(complaint.getServiceNotes());
+    }
+    
+    // Save Complaint Button Handlers
+    private Complaint getNewComplaintObject() {
+        return new Complaint(
+            complaintID,
+            complaintsCustomerID,
+            complaintDate,
+            complaintServiceType,
+            complaintStatus,
+            problemDescription,
+            serviceNotes
+        );
+    }
+    
+    // View All Customer Button Handlers
+    @FXML
+    public void viewAllComplaintsButtonClick() {
+        complaintSet = "FullSet";
+        disableAllComplaintsFields();
+        currentComplaint = 0;
+        numberOfComplaints = complaintsList.size();
+        displayComplaintRecord(currentComplaint);
+        refreshComplaintPaginationNumbers();
+    }
 }
