@@ -556,6 +556,7 @@ COMPLAINTS
     private int currentComplaint;
     private int numberOfComplaints;
     private String nextComplaintSaveAction;
+    private String nextComplaintID;
     private String complaintSet;
     private Customer iteratingComplaint;
     
@@ -628,6 +629,45 @@ COMPLAINTS
     private void refreshComplaintPaginationNumbers() {
         tfCurrentComplaint.setText(currentComplaint + 1 + "");
         tfTotalComplaint.setText(numberOfComplaints + "");
+    }
+    
+    // New Complaint Button Handlers
+    @FXML
+    public void newComplaintButtonClick() {
+        nextComplaintSaveAction = "New";
+        clearAllComplaintFields();
+        enableAllComplaintsFields();
+        tfCurrentComplaint.setText(numberOfComplaints + 1 + "");
+        tfTotalComplaint.setText(numberOfComplaints + 1 + "");
+    }
+    
+    private void clearAllComplaintFields() {
+        tfComplaintID.setText(getNextComplaintIDFromDatabase());
+        tfComplaintsCustomerID.clear();
+        dpComplaintDate.getEditor().setText("");
+        cbServiceType.getSelectionModel().clearSelection();
+        cbComplaintStatus.getSelectionModel().clearSelection();
+        taProblemDescription.clear();
+        taServiceNotes.clear();
+    }
+    
+    private String getNextComplaintIDFromDatabase() {
+        nextComplaintID = "";
+        try (Connection connection = DatabaseHandler.getConnection()) {
+            PreparedStatement getNextComplaintIDStatement = connection.prepareStatement(
+                "SELECT (MAX(compID) + 1) AS nextCompID FROM complaints;"
+            );
+            ResultSet getNextComplaintIDQueryResults = getNextComplaintIDStatement.executeQuery();
+            if (getNextComplaintIDQueryResults.next()) {
+                nextComplaintID = getNextComplaintIDQueryResults.getString("nextCompID");
+            } else {
+                nextComplaintID = "100000001";
+            }
+            connection.close();
+        } catch (Exception e) {
+            System.out.println("Connection to the Complaints database failed. Unable to load next Complaint ID from Complaints database.");
+        }
+        return nextComplaintID;
     }
     
     // Save Customer Button Handlers
