@@ -672,4 +672,30 @@ COMPLAINTS
         displayComplaintRecord(currentComplaint);
         refreshComplaintPaginationNumbers();
     }
+    
+    // Previous Customer Button Handlers
+    @FXML
+    public void previousComplaintButtonClick() {
+        disableAllComplaintsFields();
+        if (currentComplaint == 0) {
+            currentComplaint = numberOfComplaints - 1;
+        } else {
+            currentComplaint--;
+        }
+        displayComplaintRecord(currentComplaint);
+        refreshComplaintPaginationNumbers();
+    }
+    
+    // Next Customer Button Handlers
+    @FXML
+    public void nextComplaintButtonClick() {
+        disableAllComplaintsFields();
+        if (currentComplaint + 1 == numberOfComplaints) {
+            currentComplaint = 0;
+        } else {
+            currentComplaint++;
+        }
+        displayComplaintRecord(currentComplaint);
+                refreshComplaintPaginationNumbers();
+    }
 }
