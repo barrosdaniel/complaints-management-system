@@ -194,7 +194,7 @@
                               <Font size="16.0" />
                            </font>
                         </Button>
-                        <Button layoutX="641.0" layoutY="56.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="160.0" text="✏   Edit Complaint">
+                        <Button layoutX="641.0" layoutY="56.0" mnemonicParsing="false" onAction="#editComplaintButtonClick" prefHeight="39.0" prefWidth="160.0" text="✏   Edit Complaint">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -229,7 +229,7 @@
                               <Font size="16.0" />
                            </font>
                         </Button>
-                        <Button layoutX="1001.0" layoutY="134.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="🔄   Clear ">
+                        <Button layoutX="1001.0" layoutY="134.0" mnemonicParsing="false" onAction="#clearAllComplaintFieldsButtonClick" prefHeight="25.0" prefWidth="160.0" text="🔄   Clear ">
                            <font>
                               <Font size="16.0" />
                            </font>

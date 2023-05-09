@@ -336,7 +336,7 @@ CUSTOMERS
                 disableAllCustomerFields();
                 nextSaveAction = null;
                 displaySavedCustomerAlert();
-            };
+            }
         }
     }
     
@@ -661,6 +661,22 @@ COMPLAINTS
         return (nextComplaintID + 1);
     }
     
+    // Edit Complaint Button Handlers
+    @FXML
+    public void editComplaintButtonClick() {
+        if (complaintSet.equals("FullSet")) {
+            nextComplaintSaveAction = "Edit";
+            enableAllComplaintsFields();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Cannot edit in Search");
+            alert.setContentText("Complaint edit is not allowed whilst in Search mode. " + 
+                    "Please click the 'View All' button to return to View mode, then " +
+                    "try again.");
+            alert.showAndWait();
+        }
+    }
+    
     // Save Complaint Button Handlers
     @FXML
     public void saveComplaintButtonClick() {
@@ -775,6 +791,25 @@ COMPLAINTS
         alert.showAndWait();
     }
     
+    private void saveEditedComplaint() {
+        int indexOfEditedComplaint = Integer.parseInt(tfCurrentComplaint.getText()) - 1;
+        Complaint originalComplaint = complaintsList.get(indexOfEditedComplaint);
+        Complaint editedComplaint = makeNewComplaintObjectfromUI();
+        if (editedComplaint.equals(originalComplaint)) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No changes to Save");
+            alert.setContentText("The complaint record you are trying to save has no changes.");
+            alert.showAndWait();
+        } else {
+            if (alterComplaintInDatabase(editedComplaint)) {
+                complaintsList.set(indexOfEditedComplaint, editedComplaint);
+                disableAllComplaintsFields();
+                nextComplaintSaveAction = null;
+                displaySavedComplaintAlert();
+            }
+        }
+    }
+    
     private boolean alterComplaintInDatabase(Complaint editedComplaint) {
         boolean editedInDatabase = false;
         complaintID = editedComplaint.getComplaintID();
@@ -818,6 +853,14 @@ COMPLAINTS
         numberOfComplaints = complaintsList.size();
         displayComplaintRecord(currentComplaint);
         refreshComplaintPaginationNumbers();
+    }
+    
+    // Clear Complaint Button Handlers
+    @FXML
+    public void clearAllComplaintFieldsButtonClick() {
+        if (tfComplaintsCustomerID.isEditable()) {
+            clearAllComplaintFields();
+        }
     }
     
     // Previous Complaint Button Handlers
