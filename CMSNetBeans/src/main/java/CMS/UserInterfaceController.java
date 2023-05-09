@@ -556,7 +556,7 @@ COMPLAINTS
     private int currentComplaint;
     private int numberOfComplaints;
     private String nextComplaintSaveAction;
-    private String nextComplaintID;
+    private int nextComplaintID;
     private String complaintSet;
     private Customer iteratingComplaint;
     
@@ -642,7 +642,7 @@ COMPLAINTS
     }
     
     private void clearAllComplaintFields() {
-        tfComplaintID.setText(getNextComplaintIDFromDatabase());
+        tfComplaintID.setText(getNextComplaintID() + "");
         tfComplaintsCustomerID.clear();
         dpComplaintDate.getEditor().setText("");
         cbServiceType.getSelectionModel().clearSelection();
@@ -651,23 +651,14 @@ COMPLAINTS
         taServiceNotes.clear();
     }
     
-    private String getNextComplaintIDFromDatabase() {
-        nextComplaintID = "";
-        try (Connection connection = DatabaseHandler.getConnection()) {
-            PreparedStatement getNextComplaintIDStatement = connection.prepareStatement(
-                "SELECT (MAX(compID) + 1) AS nextCompID FROM complaints;"
-            );
-            ResultSet getNextComplaintIDQueryResults = getNextComplaintIDStatement.executeQuery();
-            if (getNextComplaintIDQueryResults.next()) {
-                nextComplaintID = getNextComplaintIDQueryResults.getString("nextCompID");
-            } else {
-                nextComplaintID = "100000001";
+    private int getNextComplaintID() {
+        nextComplaintID = 0;
+        for (Complaint complaint : complaintsList) {
+            if (Integer.parseInt(complaint.getComplaintID()) > nextComplaintID) {
+                nextComplaintID = Integer.parseInt(complaint.getComplaintID());
             }
-            connection.close();
-        } catch (Exception e) {
-            System.out.println("Connection to the Complaints database failed. Unable to load next Complaint ID from Complaints database.");
         }
-        return nextComplaintID;
+        return (nextComplaintID + 1);
     }
     
     // Save Customer Button Handlers
