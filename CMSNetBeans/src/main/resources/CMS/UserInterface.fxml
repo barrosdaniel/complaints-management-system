@@ -199,7 +199,7 @@
                               <Font size="16.0" />
                            </font>
                         </Button>
-                        <Button layoutX="821.0" layoutY="56.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="160.0" text="💾  Save Complaint">
+                        <Button layoutX="821.0" layoutY="56.0" mnemonicParsing="false" onAction="#saveComplaintButtonClick" prefHeight="39.0" prefWidth="160.0" text="💾  Save Complaint">
                            <font>
                               <Font size="16.0" />
                            </font>

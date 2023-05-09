@@ -661,7 +661,95 @@ COMPLAINTS
         return (nextComplaintID + 1);
     }
     
-    // Save Customer Button Handlers
+    // Save Complaint Button Handlers
+    @FXML
+    public void saveComplaintButtonClick() {
+        if (tfComplaintsCustomerID.isEditable()) {
+            if (nextComplaintSaveAction.equals("New")) {
+                saveNewComplaint();
+            } else {
+                saveEditedComplaint();
+            }
+        }
+    }
+    
+    private void saveNewComplaint() {
+        Complaint newComplaint = makeNewComplaintObjectfromUI();
+        boolean addedToDatabase = addComplaintToDatabase(newComplaint);
+        if (addedToDatabase) {
+            disableAllComplaintsFields();
+            complaintsList.clear();
+            loadComplaintsRecords();
+            int indexOfNewComplaint = -1;
+            for (int i = 0; i < complaintsList.size(); i++) {
+                if (complaintsList.get(i).getComplaintID().equals(newComplaint.getComplaintID())) {
+                    indexOfNewComplaint = i;
+                    break;
+                }
+            }
+            currentComplaint = indexOfNewComplaint;
+            displayComplaintRecord(currentComplaint);
+            numberOfComplaints = complaintsList.size();
+            refreshComplaintPaginationNumbers();
+            nextComplaintSaveAction = null;
+            displaySavedComplaintAlert();
+        }
+    }
+    
+    private Complaint makeNewComplaintObjectfromUI() {
+        complaintID = tfComplaintID.getText();
+        complaintsCustomerID = tfComplaintsCustomerID.getText();
+        complaintDate = dpComplaintDate.getValue();
+        complaintServiceType = cbServiceType.getValue().toString();
+        complaintStatus = cbComplaintStatus.getValue().toString();
+        problemDescription = taProblemDescription.getText();
+        serviceNotes = taServiceNotes.getText();
+        Complaint newComplaint = getNewComplaintObject();
+        return newComplaint;
+    }
+    
+    private Complaint getNewComplaintObject() {
+        return new Complaint(
+            complaintID,
+            complaintsCustomerID,
+            complaintDate,
+            complaintServiceType,
+            complaintStatus,
+            problemDescription,
+            serviceNotes
+        );
+    }
+    
+    private boolean addComplaintToDatabase(Complaint newComplaint) {
+        boolean addedToDatabase = false;
+        complaintID = newComplaint.getComplaintID();
+        complaintsCustomerID = newComplaint.getComplaintsCustomerID();
+        complaintDate = newComplaint.getComplaintDate();
+        complaintServiceType = newComplaint.getComplaintServiceType();
+        complaintStatus = newComplaint.getComplaintStatus();
+        problemDescription = newComplaint.getProblemDescription();
+        serviceNotes = newComplaint.getServiceNotes();
+        try (Connection connection = DatabaseHandler.getConnection()) {
+            PreparedStatement insertNewComplaintStatement = connection.prepareStatement(
+                String.format("INSERT INTO complaints (compID, custID, serviceType, problemDesc, compDate, serviceNotes, compStatus) " +
+                "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s');", 
+                complaintID, complaintsCustomerID, complaintServiceType, problemDescription,
+                complaintDate, serviceNotes, complaintStatus)
+            );
+            int rowsInserted = insertNewComplaintStatement.executeUpdate();
+            if (rowsInserted > 0) {
+                addedToDatabase = true;
+            } else {
+                System.out.println("ERROR: Complaint record not added to the Customer database.");
+            }
+            connection.close();
+        } catch (Exception e) {
+            System.out.println("Connection to the Complaints database failed. Unable to save Complaint to database.");
+            e.printStackTrace();
+        }
+        return addedToDatabase;
+    }
+    
     private void displayComplaintRecord(int index) {
         Complaint complaint;
         if (complaintSet.equals("FullSet")) {
@@ -680,20 +768,48 @@ COMPLAINTS
         taServiceNotes.setText(complaint.getServiceNotes());
     }
     
-    // Save Complaint Button Handlers
-    private Complaint getNewComplaintObject() {
-        return new Complaint(
-            complaintID,
-            complaintsCustomerID,
-            complaintDate,
-            complaintServiceType,
-            complaintStatus,
-            problemDescription,
-            serviceNotes
-        );
+    private void displaySavedComplaintAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Complaint saved");
+        alert.setContentText("Complaint record saved successfully.");
+        alert.showAndWait();
     }
     
-    // View All Customer Button Handlers
+    private boolean alterComplaintInDatabase(Complaint editedComplaint) {
+        boolean editedInDatabase = false;
+        complaintID = editedComplaint.getComplaintID();
+        complaintsCustomerID = editedComplaint.getComplaintsCustomerID();
+        complaintDate = editedComplaint.getComplaintDate();
+        complaintServiceType = editedComplaint.getComplaintServiceType();
+        complaintStatus = editedComplaint.getComplaintStatus();
+        problemDescription = editedComplaint.getProblemDescription();
+        serviceNotes = editedComplaint.getServiceNotes();
+        try (Connection connection = DatabaseHandler.getConnection()) {
+            PreparedStatement editComplaintStatement = connection.prepareStatement(
+             String.format(
+          "UPDATE complaints SET compID = '%s', custID = '%s', serviceType = '%s', problemDesc = '%s', compDate = '%s', serviceNotes = '%s', compStatus = '%s' WHERE compID = %s;",
+            complaintID, complaintsCustomerID, complaintServiceType, problemDescription, complaintDate, serviceNotes, complaintStatus, complaintID)
+            );
+            int rowsDeleted = editComplaintStatement.executeUpdate();
+            if (rowsDeleted > 0) {
+                editedInDatabase = true;
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Complaint not edited in database.");
+                alert.setContentText("The complaint record cannot be edited in the database.");
+                alert.showAndWait();
+            }
+            connection.close();
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Complaint not edited in database.");
+            alert.setContentText("Unable to connect to the database. Complaint record not edited in database.");
+            alert.showAndWait();
+        }
+        return editedInDatabase;
+    }
+
+    // View All Complaint Button Handlers
     @FXML
     public void viewAllComplaintsButtonClick() {
         complaintSet = "FullSet";
@@ -704,7 +820,7 @@ COMPLAINTS
         refreshComplaintPaginationNumbers();
     }
     
-    // Previous Customer Button Handlers
+    // Previous Complaint Button Handlers
     @FXML
     public void previousComplaintButtonClick() {
         disableAllComplaintsFields();
@@ -717,7 +833,7 @@ COMPLAINTS
         refreshComplaintPaginationNumbers();
     }
     
-    // Next Customer Button Handlers
+    // Next Complaint Button Handlers
     @FXML
     public void nextComplaintButtonClick() {
         disableAllComplaintsFields();
