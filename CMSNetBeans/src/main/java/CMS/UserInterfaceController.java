@@ -494,6 +494,13 @@ CUSTOMERS
         alert.showAndWait();
     }
     
+    // Add Customer Complaint Button Handlers
+    @FXML
+    public void addCustomerComplaintButtonClick() {
+        newComplaintButtonClick();
+        tfComplaintsCustomerID.setText(tfCustomerID.getText());
+    }
+    
     // Previous Customer Button Handlers
     @FXML
     public void previousCustomerButtonClick() {
