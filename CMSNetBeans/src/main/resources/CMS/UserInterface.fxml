@@ -153,7 +153,7 @@
                               <ComboBox fx:id="cbCustomerType" prefHeight="32.0" prefWidth="250.0" promptText="Select customer type" />
                            </children>
                         </HBox>
-                        <Button layoutX="20.0" layoutY="676.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="400.0" text="+   Add Customer Complaint">
+                        <Button layoutX="20.0" layoutY="676.0" mnemonicParsing="false" onAction="#addCustomerComplaintButtonClick" prefHeight="39.0" prefWidth="400.0" text="+   Add Customer Complaint">
                            <font>
                               <Font size="16.0" />
                            </font>
