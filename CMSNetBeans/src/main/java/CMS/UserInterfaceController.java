@@ -37,6 +37,22 @@ public class UserInterfaceController implements Initializable {
         disableReportField();
     }
     
+    private void displayUnsuccessfulRecordSaveAlert() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Unsuccessful record save");
+        alert.setContentText("The attempt to save a record to the database failed. " +
+                "Review the information provided and try again.");
+        alert.showAndWait();
+    }
+    
+    private void displayDatabaseConnectionErrorAlert() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Database connection failed");
+        alert.setContentText("Connection to the database failed. Unable to load " + 
+                "records from database.");
+        alert.showAndWait();
+    };
+    
     @FXML
     public void exitButtonClick() {
         Platform.exit();
@@ -154,7 +170,7 @@ CUSTOMERS
             getAllCustomersQueryResults.close();
             connection.close();
         } catch (Exception e) {
-            System.out.println("Connection to the Customers database failed. Unable to load customers from Customers database.");
+            displayDatabaseConnectionErrorAlert();
         }
     }
     
@@ -294,13 +310,12 @@ CUSTOMERS
             if (rowsInserted > 0) {
                 addedToDatabase = true;
             } else {
-                System.out.println("ERROR: Customer record not added to the Customer database.");
+                displayUnsuccessfulRecordSaveAlert();
             }
             insertNewCustomerStatement.close();
             connection.close();
         } catch (Exception e) {
-            System.out.println("Connection to the Customers database failed. Unable to save Customer to database.");
-            e.printStackTrace();
+            displayDatabaseConnectionErrorAlert();
         }
         return addedToDatabase;
     }
@@ -643,7 +658,7 @@ COMPLAINTS
             getAllComplaintsQueryResults.close();
             connection.close();
         } catch (Exception e) {
-            System.out.println("Connection to the Complaints database failed. Unable to load complaints from Complaints database.");
+            displayDatabaseConnectionErrorAlert();
         }
     }
     
@@ -777,13 +792,12 @@ COMPLAINTS
             if (rowsInserted > 0) {
                 addedToDatabase = true;
             } else {
-                System.out.println("ERROR: Complaint record not added to the Customer database.");
+                displayUnsuccessfulRecordSaveAlert();
             }
             insertNewComplaintStatement.close();
             connection.close();
         } catch (Exception e) {
-            System.out.println("Connection to the Complaints database failed. Unable to save Complaint to database.");
-            e.printStackTrace();
+            displayUnsuccessfulRecordSaveAlert();
         }
         return addedToDatabase;
     }
@@ -1056,7 +1070,13 @@ REPORT
                     "Complaint statistics from database.");
         alert.showAndWait();
     }
-    
-    
-    
 }
+
+/*
+TODO:
+DATA VALIDATION
+1) Customer input
+1.1. Customer ID cannot be blank
+1.2. Customer ID cannot already exist
+1.3. Customer ID must be numeric
+*/
