@@ -914,6 +914,34 @@ COMPLAINTS
             refreshComplaintPaginationNumbers();
         }
     }
+    
+        // Complaint ID Search Button Handlers
+    @FXML
+    public void complaintSearchCustomerIDButtonClick() {
+        if (complaintSet.equals("FullSet")) {
+            displayIncorrectSearchAlert();
+            return;
+        }
+        boolean matchFound = false;
+        tempComplaintsList.clear();
+        String complaintCustomerIDInput = tfComplaintsCustomerID.getText();
+        String iteratingComplaintCustomerID;
+        for (int i = 0; i < complaintsList.size(); i++) {
+            iteratingComplaint = complaintsList.get(i);
+            iteratingComplaintCustomerID = iteratingComplaint.getComplaintsCustomerID();
+            if (iteratingComplaintCustomerID.contains(complaintCustomerIDInput)) {
+                tempComplaintsList.add(iteratingComplaint);
+                matchFound = true;
+            }
+        }
+        if (matchFound) {
+            disableAllComplaintsFields();
+            currentComplaint = 0;
+            numberOfComplaints = tempComplaintsList.size();
+            displayComplaintRecord(currentComplaint);
+            refreshComplaintPaginationNumbers();
+        }
+    }
 
     // View All Complaint Button Handlers
     @FXML

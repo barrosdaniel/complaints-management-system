@@ -244,7 +244,7 @@
                               <Font size="16.0" />
                            </font>
                         </TextField>
-                        <Button layoutX="711.0" layoutY="208.0" mnemonicParsing="false" onAction="#customerSearchLastNameButtonClick" prefHeight="25.0" prefWidth="90.0" text="🔍 Search">
+                        <Button layoutX="711.0" layoutY="208.0" mnemonicParsing="false" onAction="#complaintSearchCustomerIDButtonClick" prefHeight="25.0" prefWidth="90.0" text="🔍 Search">
                            <font>
                               <Font size="16.0" />
                            </font>
