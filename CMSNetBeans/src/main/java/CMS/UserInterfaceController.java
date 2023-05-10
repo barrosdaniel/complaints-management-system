@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -33,6 +34,11 @@ public class UserInterfaceController implements Initializable {
         loadComplaintsRecords();
         viewAllCustomersButtonClick();
         viewAllComplaintsButtonClick();
+    }
+    
+    @FXML
+    public void exitButtonClick() {
+        Platform.exit();
     }
     
 /* =============================================================================
@@ -987,4 +993,6 @@ COMPLAINTS
         displayComplaintRecord(currentComplaint);
                 refreshComplaintPaginationNumbers();
     }
+    
+    
 }

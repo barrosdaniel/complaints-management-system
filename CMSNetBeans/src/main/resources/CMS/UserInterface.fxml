@@ -329,5 +329,10 @@
             <Tab text="View Reports" />
         </tabs>
       </TabPane>
+      <Button layoutX="1081.0" layoutY="10.0" mnemonicParsing="false" onAction="#exitButtonClick" prefWidth="80.0" text="🏃   Exit">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>
