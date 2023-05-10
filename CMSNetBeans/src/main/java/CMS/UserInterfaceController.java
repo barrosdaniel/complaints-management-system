@@ -493,8 +493,9 @@ CUSTOMERS
     private void displayIncorrectSearchAlert() {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Search not allowed in View mode.");
-        alert.setContentText("Searching for a customer is now allowed in View mode. " + 
-            "Please click the 'Customer Search' button first, to start a search.");
+        alert.setContentText("Searching for a customer or complaint is now allowed " +
+                "in View mode. Please click the 'Customer Search' or 'Complaint " + 
+                "Search' button first, to start a search.");
         alert.showAndWait();
     }
     
@@ -569,7 +570,7 @@ COMPLAINTS
     private String nextComplaintSaveAction;
     private int nextComplaintID;
     private String complaintSet;
-    private Customer iteratingComplaint;
+    private Complaint iteratingComplaint;
     
     // Complaint Helper Methods
     private void loadComplaintComboBoxOptions() {
@@ -884,6 +885,34 @@ COMPLAINTS
         taServiceNotes.setEditable(false);
         taServiceNotes.setStyle("-fx-control-inner-background: #F1F1F1;");
         complaintSet = "SearchSet";
+    }
+    
+    // Complaint ID Search Button Handlers
+    @FXML
+    public void complaintSearchIDButtonClick() {
+        if (complaintSet.equals("FullSet")) {
+            displayIncorrectSearchAlert();
+            return;
+        }
+        boolean matchFound = false;
+        tempComplaintsList.clear();
+        String complaintIDInput = tfComplaintID.getText();
+        String iteratingComplaintID;
+        for (int i = 0; i < complaintsList.size(); i++) {
+            iteratingComplaint = complaintsList.get(i);
+            iteratingComplaintID = iteratingComplaint.getComplaintID();
+            if (iteratingComplaintID.contains(complaintIDInput)) {
+                tempComplaintsList.add(iteratingComplaint);
+                matchFound = true;
+            }
+        }
+        if (matchFound) {
+            disableAllComplaintsFields();
+            currentComplaint = 0;
+            numberOfComplaints = tempComplaintsList.size();
+            displayComplaintRecord(currentComplaint);
+            refreshComplaintPaginationNumbers();
+        }
     }
 
     // View All Complaint Button Handlers
