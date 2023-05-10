@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -33,6 +34,11 @@ public class UserInterfaceController implements Initializable {
         loadComplaintsRecords();
         viewAllCustomersButtonClick();
         viewAllComplaintsButtonClick();
+    }
+    
+    @FXML
+    public void exitButtonClick() {
+        Platform.exit();
     }
     
 /* =============================================================================
@@ -77,7 +83,7 @@ CUSTOMERS
     private String customerSet;
     private Customer iteratingCustomer;
     
-// Customer Helper Methods
+    // Customer Helper Methods
     private void loadCustomerComboBoxOptions() {
         cbProduct.getItems().addAll("Internet", "Phone", "Billing");
         cbCustomerType.getItems().addAll("Business", "Domestic");
@@ -143,6 +149,8 @@ CUSTOMERS
                 Customer newCustomer = getNewCustomerObject();
                 customersList.add(newCustomer);
             }
+            getAllCustomersStatement.close();
+            getAllCustomersQueryResults.close();
             connection.close();
         } catch (Exception e) {
             System.out.println("Connection to the Customers database failed. Unable to load customers from Customers database.");
@@ -287,6 +295,7 @@ CUSTOMERS
             } else {
                 System.out.println("ERROR: Customer record not added to the Customer database.");
             }
+            insertNewCustomerStatement.close();
             connection.close();
         } catch (Exception e) {
             System.out.println("Connection to the Customers database failed. Unable to save Customer to database.");
@@ -365,6 +374,7 @@ CUSTOMERS
                 alert.setContentText("The customer record cannot be edited in the database.");
                 alert.showAndWait();
             }
+            editCustomerStatement.close();
             connection.close();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -489,8 +499,9 @@ CUSTOMERS
     private void displayIncorrectSearchAlert() {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Search not allowed in View mode.");
-        alert.setContentText("Searching for a customer is now allowed in View mode. " + 
-            "Please click the 'Customer Search' button first, to start a search.");
+        alert.setContentText("Searching for a customer or complaint is now allowed " +
+                "in View mode. Please click the 'Customer Search' or 'Complaint " + 
+                "Search' button first, to start a search.");
         alert.showAndWait();
     }
     
@@ -530,7 +541,7 @@ CUSTOMERS
 /* =============================================================================
 COMPLAINTS
 ============================================================================= */    
-    // Customer Section UI Controls
+    // Complaints Section UI Controls
     @FXML
     private TextField tfComplaintID;
     @FXML
@@ -550,7 +561,7 @@ COMPLAINTS
     @FXML
     private TextField tfTotalComplaint;
     
-    // Customer Section Variables
+    // Complaints Section Variables
     private final ArrayList<Complaint> complaintsList = new ArrayList();
     private final ArrayList<Complaint> tempComplaintsList = new ArrayList();
     private String complaintID;
@@ -565,7 +576,7 @@ COMPLAINTS
     private String nextComplaintSaveAction;
     private int nextComplaintID;
     private String complaintSet;
-    private Customer iteratingComplaint;
+    private Complaint iteratingComplaint;
     
     // Complaint Helper Methods
     private void loadComplaintComboBoxOptions() {
@@ -627,6 +638,8 @@ COMPLAINTS
                 Complaint newComplaint = getNewComplaintObject();
                 complaintsList.add(newComplaint);
             }
+            getAllComplaintsStatement.close();
+            getAllComplaintsQueryResults.close();
             connection.close();
         } catch (Exception e) {
             System.out.println("Connection to the Complaints database failed. Unable to load complaints from Complaints database.");
@@ -765,6 +778,7 @@ COMPLAINTS
             } else {
                 System.out.println("ERROR: Complaint record not added to the Customer database.");
             }
+            insertNewComplaintStatement.close();
             connection.close();
         } catch (Exception e) {
             System.out.println("Connection to the Complaints database failed. Unable to save Complaint to database.");
@@ -841,6 +855,7 @@ COMPLAINTS
                 alert.setContentText("The complaint record cannot be edited in the database.");
                 alert.showAndWait();
             }
+            editComplaintStatement.close();
             connection.close();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -849,6 +864,89 @@ COMPLAINTS
             alert.showAndWait();
         }
         return editedInDatabase;
+    }
+    
+    // Search Complaint Button Handlers
+    @FXML
+    public void complaintSearchButtonClick() {
+        tfComplaintID.clear();
+        tfComplaintID.setEditable(true);
+        tfComplaintID.setStyle("-fx-control-inner-background: #FFFFFF;");
+        tfComplaintsCustomerID.clear();
+        tfComplaintsCustomerID.setEditable(true);
+        tfComplaintsCustomerID.setStyle("-fx-control-inner-background: #FFFFFF;");
+        dpComplaintDate.getEditor().setText("");
+        dpComplaintDate.setEditable(false);
+        dpComplaintDate.setStyle("-fx-control-inner-background: #F1F1F1;");
+        cbServiceType.setValue(null);
+        cbServiceType.setDisable(true);
+        cbServiceType.setStyle("-fx-control-inner-background: #F1F1F1;");
+        cbComplaintStatus.setValue(null);
+        cbComplaintStatus.setDisable(true);
+        cbComplaintStatus.setStyle("-fx-control-inner-background: #F1F1F1;");
+        taProblemDescription.clear();
+        taProblemDescription.setEditable(false);
+        taProblemDescription.setStyle("-fx-control-inner-background: #F1F1F1;");
+        taServiceNotes.clear();
+        taServiceNotes.setEditable(false);
+        taServiceNotes.setStyle("-fx-control-inner-background: #F1F1F1;");
+        complaintSet = "SearchSet";
+    }
+    
+    // Complaint ID Search Button Handlers
+    @FXML
+    public void complaintSearchIDButtonClick() {
+        if (complaintSet.equals("FullSet")) {
+            displayIncorrectSearchAlert();
+            return;
+        }
+        boolean matchFound = false;
+        tempComplaintsList.clear();
+        String complaintIDInput = tfComplaintID.getText();
+        String iteratingComplaintID;
+        for (int i = 0; i < complaintsList.size(); i++) {
+            iteratingComplaint = complaintsList.get(i);
+            iteratingComplaintID = iteratingComplaint.getComplaintID();
+            if (iteratingComplaintID.contains(complaintIDInput)) {
+                tempComplaintsList.add(iteratingComplaint);
+                matchFound = true;
+            }
+        }
+        if (matchFound) {
+            disableAllComplaintsFields();
+            currentComplaint = 0;
+            numberOfComplaints = tempComplaintsList.size();
+            displayComplaintRecord(currentComplaint);
+            refreshComplaintPaginationNumbers();
+        }
+    }
+    
+        // Complaint ID Search Button Handlers
+    @FXML
+    public void complaintSearchCustomerIDButtonClick() {
+        if (complaintSet.equals("FullSet")) {
+            displayIncorrectSearchAlert();
+            return;
+        }
+        boolean matchFound = false;
+        tempComplaintsList.clear();
+        String complaintCustomerIDInput = tfComplaintsCustomerID.getText();
+        String iteratingComplaintCustomerID;
+        for (int i = 0; i < complaintsList.size(); i++) {
+            iteratingComplaint = complaintsList.get(i);
+            iteratingComplaintCustomerID = iteratingComplaint.getComplaintsCustomerID();
+            if (iteratingComplaintCustomerID.contains(complaintCustomerIDInput)) {
+                tempComplaintsList.add(iteratingComplaint);
+                matchFound = true;
+            }
+        }
+        if (matchFound) {
+            disableAllComplaintsFields();
+            currentComplaint = 0;
+            numberOfComplaints = tempComplaintsList.size();
+            displayComplaintRecord(currentComplaint);
+            refreshComplaintPaginationNumbers();
+        }
     }
 
     // View All Complaint Button Handlers
@@ -895,4 +993,6 @@ COMPLAINTS
         displayComplaintRecord(currentComplaint);
                 refreshComplaintPaginationNumbers();
     }
+    
+    
 }
