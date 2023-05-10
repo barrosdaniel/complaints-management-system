@@ -326,7 +326,31 @@
                      </padding>
                   </Pane>
                </content></Tab>
-            <Tab text="View Reports" />
+            <Tab text="View Reports">
+               <content>
+                  <Pane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <Label contentDisplay="TOP" prefHeight="75.0" prefWidth="1200.0" text="Complaints per Week Report">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                           </padding>
+                        </Label>
+                        <Button layoutX="981.0" layoutY="20.0" mnemonicParsing="false" onAction="#generateReportButtonClick" prefWidth="180.0" text="🔄   Generate Report">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
+                        <TextArea fx:id="taReportContent" layoutX="20.0" layoutY="75.0" prefHeight="720.0" prefWidth="1140.0">
+                           <font>
+                              <Font name="Monospaced Regular" size="16.0" />
+                           </font>
+                        </TextArea>
+                     </children>
+                  </Pane>
+               </content></Tab>
         </tabs>
       </TabPane>
       <Button layoutX="1081.0" layoutY="10.0" mnemonicParsing="false" onAction="#exitButtonClick" prefWidth="80.0" text="🏃   Exit">

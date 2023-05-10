@@ -34,6 +34,7 @@ public class UserInterfaceController implements Initializable {
         loadComplaintsRecords();
         viewAllCustomersButtonClick();
         viewAllComplaintsButtonClick();
+        disableReportField();
     }
     
     @FXML
@@ -993,6 +994,69 @@ COMPLAINTS
         displayComplaintRecord(currentComplaint);
                 refreshComplaintPaginationNumbers();
     }
+    
+/* =============================================================================
+REPORT
+============================================================================= */
+    // Report Section UI Controls
+    @FXML
+    private TextArea taReportContent;
+    
+    // Report Section Variables
+    private String year;
+    private String week;
+    private String weekStart;
+    private String complaintCount;
+    
+    // Report Section Helper Methods
+    private void disableReportField() {
+        taReportContent.setEditable(false);
+        taReportContent.setStyle("-fx-control-inner-background: #F1F1F1;");
+    }
+    
+    @FXML
+    public void generateReportButtonClick() {
+        String reportPrint = "";
+        try (Connection connection = DatabaseHandler.getConnection()) {
+            PreparedStatement getReportDataStatement = connection.prepareStatement(
+                "SELECT YEAR(compDate) AS year, " +
+                "WEEK(compDate) AS week, " +
+                "DATE_FORMAT(STR_TO_DATE(CONCAT(YEARWEEK(compDate), ' Monday'), '%X%V %W'), '%W %d/%m/%Y') AS weekStart,\n" +
+                "COUNT(*) AS complaintCount " +
+                "FROM complaints " +
+                "GROUP BY weekStart " +
+                "ORDER BY year DESC, week DESC;"
+            );
+            ResultSet getReportDataQueryResults = getReportDataStatement.executeQuery();
+            reportPrint += String.format("%-10s %-10s %-30s %-15s\n", "Year",
+                    "Week", "Week Start", "Complaints");
+            reportPrint += String.format("%-10s %-10s %-30s %-15s\n", "==========",
+                    "==========", "==============================", "===============");
+            while (getReportDataQueryResults.next()) {
+                year = getReportDataQueryResults.getString("year");
+                week = getReportDataQueryResults.getString("week");
+                weekStart = getReportDataQueryResults.getString("weekStart");
+                complaintCount = getReportDataQueryResults.getString("complaintCount");
+                reportPrint += String.format("%-10s %-10s %-30s %-15s\n", year,
+                    week, weekStart, complaintCount);
+            }
+            getReportDataStatement.close();
+            getReportDataQueryResults.close();
+            connection.close();
+        } catch (Exception e) {
+            displayReportUnsuccessfulAlert();
+        }
+        taReportContent.setText(reportPrint);
+    }
+
+    private void displayReportUnsuccessfulAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Report failed");
+        alert.setContentText("Connection to the Complaints database failed. Unable to load " +
+                    "Complaint statistics from database.");
+        alert.showAndWait();
+    }
+    
     
     
 }
