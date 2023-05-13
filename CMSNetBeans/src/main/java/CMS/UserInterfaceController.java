@@ -105,7 +105,7 @@ CUSTOMERS
     private String customerType;
     private int currentCustomer;
     private int numberOfCustomers;
-    private String nextSaveAction;
+    private SaveAction nextCustomerSaveAction;
     private DataSet customerSet;
     private Customer iteratingCustomer;
     private final int FIRST_NAME_FIELD_MAX_SIZE = 30;
@@ -198,7 +198,7 @@ CUSTOMERS
     // New Customer Button Handlers
     @FXML
     public void newCustomerButtonClick() {
-        nextSaveAction = "New";
+        nextCustomerSaveAction = SaveAction.NEW;
         clearAllCustomersFields();
         enableAllCustomerFields();
         tfCurrentCustomer.setText(numberOfCustomers + 1 + "");
@@ -220,7 +220,7 @@ CUSTOMERS
     @FXML
     public void editCustomerButtonClick() {
         if (customerSet.equals(DataSet.FULL_SET)) {
-            nextSaveAction = "Edit";
+            nextCustomerSaveAction = SaveAction.EDIT;
             enableAllCustomerFields();
             tfCustomerID.setEditable(false);
             tfCustomerID.setStyle("-fx-control-inner-background: #F1F1F1;");
@@ -239,7 +239,7 @@ CUSTOMERS
     public void saveCustomerButtonClick() {
         if (tfFirstName.isEditable()) {
             if (validateAllCustomerFieldsInput()) {
-                if (nextSaveAction.equals("New")) {
+                if (nextCustomerSaveAction.equals(SaveAction.NEW)) {
                     saveNewCustomer();
                 } else {
                     saveEditedCustomer();
@@ -280,7 +280,7 @@ CUSTOMERS
             alert.showAndWait();
             return false;
         }
-        if (nextSaveAction.equals("New") && 
+        if (nextCustomerSaveAction.equals(SaveAction.NEW) && 
             Utilities.customerIDAlreadyExists(customerIDInput, customersList)) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Existing Customer ID");
@@ -413,7 +413,7 @@ CUSTOMERS
             displayCustomerRecord(currentCustomer);
             numberOfCustomers = customersList.size();
             refreshCustomerPaginationNumbers();
-            nextSaveAction = null;
+            nextCustomerSaveAction = null;
             displaySavedCustomerAlert();
         }
     }
@@ -515,7 +515,7 @@ CUSTOMERS
             if (alterCustomerInDatabase(editedCustomer)) {
                 customersList.set(indexOfEditedCustomer, editedCustomer);
                 disableAllCustomerFields();
-                nextSaveAction = null;
+                nextCustomerSaveAction = null;
                 displaySavedCustomerAlert();
             }
         }
@@ -748,7 +748,7 @@ COMPLAINTS
     private String serviceNotes;
     private int currentComplaint;
     private int numberOfComplaints;
-    private String nextComplaintSaveAction;
+    private SaveAction nextComplaintSaveAction;
     private int nextComplaintID;
     private DataSet complaintSet;
     private Complaint iteratingComplaint;
@@ -829,7 +829,7 @@ COMPLAINTS
     // New Complaint Button Handlers
     @FXML
     public void newComplaintButtonClick() {
-        nextComplaintSaveAction = "New";
+        nextComplaintSaveAction = SaveAction.NEW;
         clearAllComplaintFields();
         enableAllComplaintsFields();
         tfCurrentComplaint.setText(numberOfComplaints + 1 + "");
@@ -860,7 +860,7 @@ COMPLAINTS
     @FXML
     public void editComplaintButtonClick() {
         if (complaintSet.equals(DataSet.FULL_SET)) {
-            nextComplaintSaveAction = "Edit";
+            nextComplaintSaveAction = SaveAction.EDIT;
             enableAllComplaintsFields();
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -876,7 +876,7 @@ COMPLAINTS
     @FXML
     public void saveComplaintButtonClick() {
         if (tfComplaintsCustomerID.isEditable()) {
-            if (nextComplaintSaveAction.equals("New")) {
+            if (nextComplaintSaveAction.equals(SaveAction.NEW)) {
                 saveNewComplaint();
             } else {
                 saveEditedComplaint();
