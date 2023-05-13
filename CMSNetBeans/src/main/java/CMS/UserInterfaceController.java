@@ -106,7 +106,7 @@ CUSTOMERS
     private int currentCustomer;
     private int numberOfCustomers;
     private String nextSaveAction;
-    private String customerSet;
+    private DataSet customerSet;
     private Customer iteratingCustomer;
     private final int FIRST_NAME_FIELD_MAX_SIZE = 30;
     private final int LAST_NAME_FIELD_MAX_SIZE = 30;
@@ -219,7 +219,7 @@ CUSTOMERS
     // Edit Customer Button Handlers
     @FXML
     public void editCustomerButtonClick() {
-        if (customerSet.equals("FullSet")) {
+        if (customerSet.equals(DataSet.FULL_SET)) {
             nextSaveAction = "Edit";
             enableAllCustomerFields();
             tfCustomerID.setEditable(false);
@@ -477,7 +477,7 @@ CUSTOMERS
     
     private void displayCustomerRecord(int index) {
         Customer customer;
-        if (customerSet.equals("FullSet")) {
+        if (customerSet.equals(DataSet.FULL_SET)) {
             customer = customersList.get(index);
         } else {
             customer = tempCustomersList.get(index);
@@ -593,13 +593,13 @@ CUSTOMERS
         tfTotalCustomers.clear();
         tfTotalCustomers.setEditable(false);
         tfTotalCustomers.setStyle("-fx-control-inner-background: #F1F1F1;");
-        customerSet = "SearchSet";
+        customerSet = DataSet.SEARCH_SET;
     }
     
     // View All Customer Button Handlers
     @FXML
     public void viewAllCustomersButtonClick() {
-        customerSet = "FullSet";
+        customerSet = DataSet.FULL_SET;
         disableAllCustomerFields();
         currentCustomer = 0;
         numberOfCustomers = customersList.size();
@@ -618,7 +618,7 @@ CUSTOMERS
     // Customer Last Name Search Button Handlers
     @FXML
     public void customerSearchLastNameButtonClick() {
-        if (customerSet.equals("FullSet")) {
+        if (customerSet.equals(DataSet.FULL_SET)) {
             displayIncorrectSearchAlert();
             return;
         }
@@ -646,7 +646,7 @@ CUSTOMERS
     // Customer Contact Number Search Button Handlers
     @FXML
     public void customerSearchContactNumberButtonClick() {
-        if (customerSet.equals("FullSet")) {
+        if (customerSet.equals(DataSet.FULL_SET)) {
             displayIncorrectSearchAlert();
             return;
         }
@@ -750,7 +750,7 @@ COMPLAINTS
     private int numberOfComplaints;
     private String nextComplaintSaveAction;
     private int nextComplaintID;
-    private String complaintSet;
+    private DataSet complaintSet;
     private Complaint iteratingComplaint;
     
     // Complaint Helper Methods
@@ -859,7 +859,7 @@ COMPLAINTS
     // Edit Complaint Button Handlers
     @FXML
     public void editComplaintButtonClick() {
-        if (complaintSet.equals("FullSet")) {
+        if (complaintSet.equals(DataSet.FULL_SET)) {
             nextComplaintSaveAction = "Edit";
             enableAllComplaintsFields();
         } else {
@@ -963,7 +963,7 @@ COMPLAINTS
     
     private void displayComplaintRecord(int index) {
         Complaint complaint;
-        if (complaintSet.equals("FullSet")) {
+        if (complaintSet.equals(DataSet.FULL_SET)) {
             complaint = complaintsList.get(index);
         } else {
             complaint = tempComplaintsList.get(index);
@@ -1064,13 +1064,13 @@ COMPLAINTS
         taServiceNotes.clear();
         taServiceNotes.setEditable(false);
         taServiceNotes.setStyle("-fx-control-inner-background: #F1F1F1;");
-        complaintSet = "SearchSet";
+        complaintSet = DataSet.SEARCH_SET;
     }
     
     // Complaint ID Search Button Handlers
     @FXML
     public void complaintSearchIDButtonClick() {
-        if (complaintSet.equals("FullSet")) {
+        if (complaintSet.equals(DataSet.FULL_SET)) {
             displayIncorrectSearchAlert();
             return;
         }
@@ -1098,7 +1098,7 @@ COMPLAINTS
         // Complaint ID Search Button Handlers
     @FXML
     public void complaintSearchCustomerIDButtonClick() {
-        if (complaintSet.equals("FullSet")) {
+        if (complaintSet.equals(DataSet.FULL_SET)) {
             displayIncorrectSearchAlert();
             return;
         }
@@ -1126,7 +1126,7 @@ COMPLAINTS
     // View All Complaint Button Handlers
     @FXML
     public void viewAllComplaintsButtonClick() {
-        complaintSet = "FullSet";
+        complaintSet = DataSet.FULL_SET;
         disableAllComplaintsFields();
         currentComplaint = 0;
         numberOfComplaints = complaintsList.size();
