@@ -14,7 +14,9 @@ public class Customer {
     private String customerProduct;
     private String customerType;
 
-    public Customer(String customerID, String customerFirstName, String customerLastName, String customerContactNumber, String customerEmail, String customerAddress, String customerType, String customerProduct) {
+    public Customer(String customerID, String customerFirstName, String customerLastName, 
+            String customerContactNumber, String customerEmail, String customerAddress, 
+            String customerProduct, String customerType) {
         this.customerID = customerID;
         this.customerFirstName = customerFirstName;
         this.customerLastName = customerLastName;
@@ -73,20 +75,20 @@ public class Customer {
         this.customerAddress = customerAddress;
     }
 
-    public String getCustomerType() {
-        return customerType;
-    }
-
-    public void setCustomerType(String customerType) {
-        this.customerType = customerType;
-    }
-
     public String getCustomerProduct() {
         return customerProduct;
     }
 
     public void setCustomerProduct(String customerProduct) {
         this.customerProduct = customerProduct;
+    }
+
+    public String getCustomerType() {
+        return customerType;
+    }
+
+    public void setCustomerType(String customerType) {
+        this.customerType = customerType;
     }
     
     @Override

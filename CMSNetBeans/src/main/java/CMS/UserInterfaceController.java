@@ -3,6 +3,7 @@ package CMS;
 import CMS.Model.Complaint;
 import CMS.Model.Customer;
 import CMS.Util.DatabaseHandler;
+import CMS.Util.Utilities;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -51,7 +52,15 @@ public class UserInterfaceController implements Initializable {
         alert.setContentText("Connection to the database failed. Unable to load " + 
                 "records from database.");
         alert.showAndWait();
-    };
+    }
+    
+    private void displayInvalidFieldsAlert() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Invalid information entered");
+        alert.setContentText("Unable to save the data to the database. Please " +
+                "review the information entered and try again.");
+        alert.showAndWait();
+    }
     
     @FXML
     public void exitButtonClick() {
@@ -99,6 +108,13 @@ CUSTOMERS
     private String nextSaveAction;
     private String customerSet;
     private Customer iteratingCustomer;
+    private final int FIRST_NAME_FIELD_MAX_SIZE = 30;
+    private final int LAST_NAME_FIELD_MAX_SIZE = 30;
+    private final int CONTACT_NUMBER_FIELD_MAX_SIZE = 10;
+    private final int EMAIL_FIELD_MAX_SIZE = 30;
+    private final int ADDRESS_FIELD_MAX_SIZE = 50;
+    private final int PRODUCT_FIELD_MAX_SIZE = 10;
+    private final int CUSTOMER_TYPE_FIELD_MAX_SIZE = 10;
     
     // Customer Helper Methods
     private void loadCustomerComboBoxOptions() {
@@ -222,12 +238,161 @@ CUSTOMERS
     @FXML
     public void saveCustomerButtonClick() {
         if (tfFirstName.isEditable()) {
-            if (nextSaveAction.equals("New")) {
-                saveNewCustomer();
+            if (validateAllCustomerFieldsInput()) {
+                if (nextSaveAction.equals("New")) {
+                    saveNewCustomer();
+                } else {
+                    saveEditedCustomer();
+                }
             } else {
-                saveEditedCustomer();
+                displayInvalidFieldsAlert();
             }
         }
+    }
+    
+    private boolean validateAllCustomerFieldsInput() {
+        boolean allCustomerFieldsAreValid = false;
+        if (    
+                validateCustomerID() &&
+                validateCustomerFirstName() &&
+                validateCustomerLastName() &&
+                validateCustomerContactNumber() &&
+                validateCustomerEmail() &&
+                validateCustomerAddress() &&
+                validateCustomerProduct() &&
+                validateCustomerType()
+            ) {
+            allCustomerFieldsAreValid = true;
+        }
+        return allCustomerFieldsAreValid;
+    }
+    
+    private boolean validateCustomerID() {
+        String customerIDInput = tfCustomerID.getText();
+        if (Utilities.isEmptyInput(customerIDInput) ||
+            Utilities.isNotIntegerInput(customerIDInput) ||
+            Utilities.isTooLarge(customerIDInput)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Customer ID");
+            alert.setContentText("The field 'Customer ID' must be filled in, " +
+                    "must be numeric, and must not be greater than than " +
+                    Integer.MAX_VALUE + ".");
+            alert.showAndWait();
+            return false;
+        }
+        if (nextSaveAction.equals("New") && 
+            Utilities.customerIDAlreadyExists(customerIDInput, customersList)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Existing Customer ID");
+            alert.setContentText("The field 'Customer ID' must not already exist.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateCustomerFirstName() {
+        String customerFirstNameInput = tfFirstName.getText();
+        if (Utilities.isTooLong(customerFirstNameInput, 
+                FIRST_NAME_FIELD_MAX_SIZE) || 
+            Utilities.isEmptyInput(customerFirstNameInput)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Customer First Name");
+            alert.setContentText("The field 'First Name' must be filled in " +
+                    "and must not be longer than 30 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateCustomerLastName() {
+        String customerLastNameInput = tfLastName.getText();
+        if (Utilities.isTooLong(customerLastNameInput, 
+                LAST_NAME_FIELD_MAX_SIZE) ||
+            Utilities.isEmptyInput(customerLastNameInput)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Customer Last Name");
+            alert.setContentText("The field 'Last Name' must be filled in " +
+                    "and must not be longer than 30 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateCustomerContactNumber() {
+        String contactNumberInput = tfContactNumber.getText();
+        if (Utilities.isEmptyInput(contactNumberInput) ||
+            Utilities.isNotIntegerInput(contactNumberInput) ||
+            Utilities.isTooLong(customerID, CONTACT_NUMBER_FIELD_MAX_SIZE)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Customer Contact Number");
+            alert.setContentText("The field 'Contact Number' must be filled in, " +
+                    "must be numeric, and must not be longer than 10 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateCustomerEmail() {
+        String customerEmailInput = tfEmail.getText();
+        if (Utilities.isTooLong(customerEmailInput, 
+                EMAIL_FIELD_MAX_SIZE) ||
+            Utilities.isEmptyInput(customerEmailInput) ||
+            Utilities.hasNoAt(customerEmailInput)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Customer Email");
+            alert.setContentText("The field 'Email' must be filled in, " +
+                    "must have a '@', and must not be longer than 30 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateCustomerAddress() {
+        String customerAddressInput = taAddress.getText();
+        if (Utilities.isTooLong(customerAddressInput, 
+                ADDRESS_FIELD_MAX_SIZE) ||
+            Utilities.isEmptyInput(customerAddressInput)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Customer Address");
+            alert.setContentText("The field 'Address' must be filled in " +
+                    "and must not be longer than 50 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateCustomerProduct() {
+        String product = cbProduct.getValue().toString();
+        if (Utilities.isNotSelected(product) ||
+            Utilities.isTooLong(product, PRODUCT_FIELD_MAX_SIZE)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Customer Product");
+            alert.setContentText("The field 'Product' must be selected " +
+                    "and must not be longer than 10 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateCustomerType() {
+        String customerType = cbCustomerType.getValue().toString();
+        if (Utilities.isNotSelected(customerType) ||
+            Utilities.isTooLong(customerType, CUSTOMER_TYPE_FIELD_MAX_SIZE)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Customer Type");
+            alert.setContentText("The field 'Customer Type' must be selected " +
+                    "and must not be longer than 10 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
     }
     
     private void saveNewCustomer() {
@@ -258,23 +423,13 @@ CUSTOMERS
         customerFirstName = tfFirstName.getText();
         customerLastName = tfLastName.getText();
         customerContactNumber = tfContactNumber.getText();
-        customerContactNumber = removeBlankSpaces(customerContactNumber);
+        customerContactNumber = Utilities.removeBlankSpaces(customerContactNumber);
         customerEmail = tfEmail.getText();
         customerAddress = taAddress.getText();
         customerProduct = cbProduct.getValue().toString();
         customerType = cbCustomerType.getValue().toString();
         Customer newCustomer = getNewCustomerObject();
         return newCustomer;
-    }
-    
-    private String removeBlankSpaces (String input) {
-        if (input == null) {
-            return "";
-        } else {
-            String trimmedInput = input.trim();
-            trimmedInput = trimmedInput.replace(" ", "");
-            return trimmedInput;
-        }
     }
     
     private Customer getNewCustomerObject() {
@@ -285,8 +440,8 @@ CUSTOMERS
             customerContactNumber,
             customerEmail,
             customerAddress,
-            customerType,
-            customerProduct);
+            customerProduct,
+            customerType);
     }
     
     private boolean addCustomerToDatabase(Customer newCustomer) {
@@ -301,10 +456,10 @@ CUSTOMERS
         customerType = newCustomer.getCustomerType();
         try (Connection connection = DatabaseHandler.getConnection()) {
             PreparedStatement insertNewCustomerStatement = connection.prepareStatement(
-                String.format("INSERT INTO customers (custID, fName, lName, mobile, email, addr, product, custType) " +
+                String.format("INSERT INTO customers (custID, fName, lName, mobile, email, addr, custType, product) " +
                 "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');", 
                 customerID, customerFirstName, customerLastName, customerContactNumber,
-                customerEmail, customerAddress, customerProduct, customerType)
+                customerEmail, customerAddress, customerType, customerProduct)
             );
             int rowsInserted = insertNewCustomerStatement.executeUpdate();
             if (rowsInserted > 0) {
@@ -353,7 +508,8 @@ CUSTOMERS
         if (editedCustomer.equals(originalCustomer)) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No changes to Save");
-            alert.setContentText("The customer record you are trying to save has no changes.");
+            alert.setContentText("The customer record you are trying to save " + 
+                    "has no changes.");
             alert.showAndWait();
         } else {
             if (alterCustomerInDatabase(editedCustomer)) {
@@ -378,9 +534,12 @@ CUSTOMERS
         try (Connection connection = DatabaseHandler.getConnection()) {
             PreparedStatement editCustomerStatement = connection.prepareStatement(
              String.format(
-          "UPDATE customers SET fname = '%s', lName = '%s', mobile = '%s', email = '%s', addr = '%s', custType = '%s', product = '%s' WHERE custID = %s;",
-            customerFirstName, customerLastName, customerContactNumber, customerEmail, customerAddress, customerProduct, customerType, customerID)
-            );
+          "UPDATE customers SET fname = '%s', lName = '%s', mobile = '%s', " + 
+                  "email = '%s', addr = '%s', custType = '%s', product = '%s' " +
+                  "WHERE custID = %s;",
+            customerFirstName, customerLastName, customerContactNumber,
+            customerEmail, customerAddress, customerType,
+            customerProduct, customerID));
             int rowsDeleted = editCustomerStatement.executeUpdate();
             if (rowsDeleted > 0) {
                 editedInDatabase = true;
@@ -1071,12 +1230,3 @@ REPORT
         alert.showAndWait();
     }
 }
-
-/*
-TODO:
-DATA VALIDATION
-1) Customer input
-1.1. Customer ID cannot be blank
-1.2. Customer ID cannot already exist
-1.3. Customer ID must be numeric
-*/
