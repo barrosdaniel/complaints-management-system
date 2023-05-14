@@ -105,8 +105,8 @@ CUSTOMERS
     private String customerType;
     private int currentCustomer;
     private int numberOfCustomers;
-    private String nextSaveAction;
-    private String customerSet;
+    private SaveAction nextCustomerSaveAction;
+    private DataSet customerSet;
     private Customer iteratingCustomer;
     private final int FIRST_NAME_FIELD_MAX_SIZE = 30;
     private final int LAST_NAME_FIELD_MAX_SIZE = 30;
@@ -198,7 +198,7 @@ CUSTOMERS
     // New Customer Button Handlers
     @FXML
     public void newCustomerButtonClick() {
-        nextSaveAction = "New";
+        nextCustomerSaveAction = SaveAction.NEW;
         clearAllCustomersFields();
         enableAllCustomerFields();
         tfCurrentCustomer.setText(numberOfCustomers + 1 + "");
@@ -219,8 +219,8 @@ CUSTOMERS
     // Edit Customer Button Handlers
     @FXML
     public void editCustomerButtonClick() {
-        if (customerSet.equals("FullSet")) {
-            nextSaveAction = "Edit";
+        if (customerSet.equals(DataSet.FULL_SET)) {
+            nextCustomerSaveAction = SaveAction.EDIT;
             enableAllCustomerFields();
             tfCustomerID.setEditable(false);
             tfCustomerID.setStyle("-fx-control-inner-background: #F1F1F1;");
@@ -239,7 +239,7 @@ CUSTOMERS
     public void saveCustomerButtonClick() {
         if (tfFirstName.isEditable()) {
             if (validateAllCustomerFieldsInput()) {
-                if (nextSaveAction.equals("New")) {
+                if (nextCustomerSaveAction.equals(SaveAction.NEW)) {
                     saveNewCustomer();
                 } else {
                     saveEditedCustomer();
@@ -280,7 +280,7 @@ CUSTOMERS
             alert.showAndWait();
             return false;
         }
-        if (nextSaveAction.equals("New") && 
+        if (nextCustomerSaveAction.equals(SaveAction.NEW) && 
             Utilities.customerIDAlreadyExists(customerIDInput, customersList)) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Existing Customer ID");
@@ -368,9 +368,13 @@ CUSTOMERS
     }
     
     private boolean validateCustomerProduct() {
-        String product = cbProduct.getValue().toString();
-        if (Utilities.isNotSelected(product) ||
-            Utilities.isTooLong(product, PRODUCT_FIELD_MAX_SIZE)) {
+        try {
+            String product = cbProduct.getValue().toString();
+            if (Utilities.isNotSelected(product) ||
+                Utilities.isTooLong(product, PRODUCT_FIELD_MAX_SIZE)) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Incorrect Customer Product");
             alert.setContentText("The field 'Product' must be selected " +
@@ -382,9 +386,13 @@ CUSTOMERS
     }
     
     private boolean validateCustomerType() {
-        String customerType = cbCustomerType.getValue().toString();
-        if (Utilities.isNotSelected(customerType) ||
-            Utilities.isTooLong(customerType, CUSTOMER_TYPE_FIELD_MAX_SIZE)) {
+        try {
+            String customerType = cbCustomerType.getValue().toString();
+            if (Utilities.isNotSelected(customerType) ||
+                Utilities.isTooLong(customerType, CUSTOMER_TYPE_FIELD_MAX_SIZE)) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Incorrect Customer Type");
             alert.setContentText("The field 'Customer Type' must be selected " +
@@ -413,7 +421,7 @@ CUSTOMERS
             displayCustomerRecord(currentCustomer);
             numberOfCustomers = customersList.size();
             refreshCustomerPaginationNumbers();
-            nextSaveAction = null;
+            nextCustomerSaveAction = null;
             displaySavedCustomerAlert();
         }
     }
@@ -477,7 +485,7 @@ CUSTOMERS
     
     private void displayCustomerRecord(int index) {
         Customer customer;
-        if (customerSet.equals("FullSet")) {
+        if (customerSet.equals(DataSet.FULL_SET)) {
             customer = customersList.get(index);
         } else {
             customer = tempCustomersList.get(index);
@@ -515,7 +523,7 @@ CUSTOMERS
             if (alterCustomerInDatabase(editedCustomer)) {
                 customersList.set(indexOfEditedCustomer, editedCustomer);
                 disableAllCustomerFields();
-                nextSaveAction = null;
+                nextCustomerSaveAction = null;
                 displaySavedCustomerAlert();
             }
         }
@@ -593,13 +601,13 @@ CUSTOMERS
         tfTotalCustomers.clear();
         tfTotalCustomers.setEditable(false);
         tfTotalCustomers.setStyle("-fx-control-inner-background: #F1F1F1;");
-        customerSet = "SearchSet";
+        customerSet = DataSet.SEARCH_SET;
     }
     
     // View All Customer Button Handlers
     @FXML
     public void viewAllCustomersButtonClick() {
-        customerSet = "FullSet";
+        customerSet = DataSet.FULL_SET;
         disableAllCustomerFields();
         currentCustomer = 0;
         numberOfCustomers = customersList.size();
@@ -618,7 +626,7 @@ CUSTOMERS
     // Customer Last Name Search Button Handlers
     @FXML
     public void customerSearchLastNameButtonClick() {
-        if (customerSet.equals("FullSet")) {
+        if (customerSet.equals(DataSet.FULL_SET)) {
             displayIncorrectSearchAlert();
             return;
         }
@@ -646,7 +654,7 @@ CUSTOMERS
     // Customer Contact Number Search Button Handlers
     @FXML
     public void customerSearchContactNumberButtonClick() {
-        if (customerSet.equals("FullSet")) {
+        if (customerSet.equals(DataSet.FULL_SET)) {
             displayIncorrectSearchAlert();
             return;
         }
@@ -748,10 +756,14 @@ COMPLAINTS
     private String serviceNotes;
     private int currentComplaint;
     private int numberOfComplaints;
-    private String nextComplaintSaveAction;
+    private SaveAction nextComplaintSaveAction;
     private int nextComplaintID;
-    private String complaintSet;
+    private DataSet complaintSet;
     private Complaint iteratingComplaint;
+    private final int SERVICE_TYPE_FIELD_MAX_SIZE = 10;
+    private final int COMPLAINT_STATUS_FIELD_MAX_SIZE = 10;
+    private final int PROBLEM_DESCRIPTION_FIELD_MAX_SIZE = 150;
+    private final int SERVICE_NOTES_FIELD_MAX_SIZE = 150;
     
     // Complaint Helper Methods
     private void loadComplaintComboBoxOptions() {
@@ -762,8 +774,6 @@ COMPLAINTS
     private void enableAllComplaintsFields() {
         tfComplaintsCustomerID.setEditable(true);
         tfComplaintsCustomerID.setStyle("-fx-control-inner-background: #FFFFFF;");
-        dpComplaintDate.setEditable(true);
-        dpComplaintDate.setStyle("-fx-control-inner-background: #FFFFFF;");
         cbServiceType.setDisable(false);
         cbServiceType.setStyle("-fx-control-inner-background: #FFFFFF;");
         cbComplaintStatus.setDisable(false);
@@ -829,7 +839,7 @@ COMPLAINTS
     // New Complaint Button Handlers
     @FXML
     public void newComplaintButtonClick() {
-        nextComplaintSaveAction = "New";
+        nextComplaintSaveAction = SaveAction.NEW;
         clearAllComplaintFields();
         enableAllComplaintsFields();
         tfCurrentComplaint.setText(numberOfComplaints + 1 + "");
@@ -859,8 +869,8 @@ COMPLAINTS
     // Edit Complaint Button Handlers
     @FXML
     public void editComplaintButtonClick() {
-        if (complaintSet.equals("FullSet")) {
-            nextComplaintSaveAction = "Edit";
+        if (complaintSet.equals(DataSet.FULL_SET)) {
+            nextComplaintSaveAction = SaveAction.EDIT;
             enableAllComplaintsFields();
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -876,12 +886,120 @@ COMPLAINTS
     @FXML
     public void saveComplaintButtonClick() {
         if (tfComplaintsCustomerID.isEditable()) {
-            if (nextComplaintSaveAction.equals("New")) {
-                saveNewComplaint();
+            if (validateAllComplaintFieldsInput()) {
+                if (nextComplaintSaveAction.equals(SaveAction.NEW)) {
+                    saveNewComplaint();
+                } else {
+                    saveEditedComplaint();
+                }
             } else {
-                saveEditedComplaint();
+                displayInvalidFieldsAlert();
             }
         }
+    }
+    
+    private boolean validateAllComplaintFieldsInput() {
+        boolean allComplaintFieldsAreValid = false;
+        if (
+                validateComplaintCustomerID() &&
+                validateComplaintDate() &&
+                validateServiceType() &&
+                validateComplaintStatus() &&
+                validateProblemDescription() &&
+                validateServiceNotes()
+            ) {
+            allComplaintFieldsAreValid = true;
+        }
+        return allComplaintFieldsAreValid;
+    }
+    
+    private boolean validateComplaintCustomerID() {
+        String complaintCustomerID = tfComplaintsCustomerID.getText();
+        if (Utilities.inexistentCustomerID(complaintCustomerID, customersList)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Customer ID");
+            alert.setContentText("The 'Customer ID' provided does not exist.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateComplaintDate() {
+        LocalDate dateInput = dpComplaintDate.getValue();
+        if (Utilities.isEmptyInput(dateInput)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Complaint Date");
+            alert.setContentText("The 'Complaint Date' must not be empty.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateServiceType() {
+        try {
+            String serviceType = cbServiceType.getValue().toString();
+            if (Utilities.isNotSelected(serviceType) ||
+                Utilities.isTooLong(serviceType, SERVICE_TYPE_FIELD_MAX_SIZE)) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Service Type");
+            alert.setContentText("The field 'Service Type' must be selected " +
+                    "and must not be longer than 10 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateComplaintStatus() {
+        try {
+            String complaintStatus = cbComplaintStatus.getValue().toString();
+            if (Utilities.isNotSelected(complaintStatus) ||
+                Utilities.isTooLong(complaintStatus, COMPLAINT_STATUS_FIELD_MAX_SIZE)) {
+            }
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Complaint Status");
+            alert.setContentText("The field 'Complaint Status' must be selected " +
+                    "and must not be longer than 10 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateProblemDescription() {
+        String problemDescription = taProblemDescription.getText();
+        if (Utilities.isTooLong(problemDescription, 
+                PROBLEM_DESCRIPTION_FIELD_MAX_SIZE) ||
+            Utilities.isEmptyInput(problemDescription)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Problem Description");
+            alert.setContentText("The field 'Problem Description' must be filled in " +
+                    "and must not be longer than 150 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateServiceNotes(){
+        String serviceNotes = taServiceNotes.getText();
+        if (Utilities.isTooLong(serviceNotes, 
+                SERVICE_NOTES_FIELD_MAX_SIZE) ||
+            Utilities.isEmptyInput(serviceNotes)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Service Notes");
+            alert.setContentText("The field 'Service Notes' must be filled in " +
+                    "and must not be longer than 150 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
     }
     
     private void saveNewComplaint() {
@@ -963,7 +1081,7 @@ COMPLAINTS
     
     private void displayComplaintRecord(int index) {
         Complaint complaint;
-        if (complaintSet.equals("FullSet")) {
+        if (complaintSet.equals(DataSet.FULL_SET)) {
             complaint = complaintsList.get(index);
         } else {
             complaint = tempComplaintsList.get(index);
@@ -1064,13 +1182,13 @@ COMPLAINTS
         taServiceNotes.clear();
         taServiceNotes.setEditable(false);
         taServiceNotes.setStyle("-fx-control-inner-background: #F1F1F1;");
-        complaintSet = "SearchSet";
+        complaintSet = DataSet.SEARCH_SET;
     }
     
     // Complaint ID Search Button Handlers
     @FXML
     public void complaintSearchIDButtonClick() {
-        if (complaintSet.equals("FullSet")) {
+        if (complaintSet.equals(DataSet.FULL_SET)) {
             displayIncorrectSearchAlert();
             return;
         }
@@ -1098,7 +1216,7 @@ COMPLAINTS
         // Complaint ID Search Button Handlers
     @FXML
     public void complaintSearchCustomerIDButtonClick() {
-        if (complaintSet.equals("FullSet")) {
+        if (complaintSet.equals(DataSet.FULL_SET)) {
             displayIncorrectSearchAlert();
             return;
         }
@@ -1126,7 +1244,7 @@ COMPLAINTS
     // View All Complaint Button Handlers
     @FXML
     public void viewAllComplaintsButtonClick() {
-        complaintSet = "FullSet";
+        complaintSet = DataSet.FULL_SET;
         disableAllComplaintsFields();
         currentComplaint = 0;
         numberOfComplaints = complaintsList.size();
@@ -1213,6 +1331,10 @@ REPORT
                 reportPrint += String.format("%-10s %-10s %-30s %-15s\n", year,
                     week, weekStart, complaintCount);
             }
+            reportPrint += String.format("%-10s %-10s %-30s %-15s\n", "==========",
+                    "==========", "==============================", "===============");
+            reportPrint += String.format("%-10s %-10s %-30s %-15s\n", "",
+                    "", "TOTAL", complaintsList.size());
             getReportDataStatement.close();
             getReportDataQueryResults.close();
             connection.close();
