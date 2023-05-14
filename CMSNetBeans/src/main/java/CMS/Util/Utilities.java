@@ -1,6 +1,7 @@
 package CMS.Util;
 
 import CMS.Model.Customer;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 /**
@@ -28,6 +29,13 @@ public class Utilities {
         } else {
             return false;
         }
+    }
+    
+    public static boolean isEmptyInput(LocalDate inputDate) {
+        if (inputDate == null) {
+            return true;
+        } 
+        return false;
     }
     
     public static boolean isNotIntegerInput(String inputString) {
@@ -80,6 +88,11 @@ public class Utilities {
     
     public static boolean isNotSelected(String inputString) {
         return isEmptyInput(inputString);
+    }
+    
+    public static boolean inexistentCustomerID(String inputString, 
+            ArrayList<Customer> customersList) {
+        return !customerIDAlreadyExists(inputString, customersList);
     }
     
 }

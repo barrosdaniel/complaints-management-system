@@ -368,9 +368,13 @@ CUSTOMERS
     }
     
     private boolean validateCustomerProduct() {
-        String product = cbProduct.getValue().toString();
-        if (Utilities.isNotSelected(product) ||
-            Utilities.isTooLong(product, PRODUCT_FIELD_MAX_SIZE)) {
+        try {
+            String product = cbProduct.getValue().toString();
+            if (Utilities.isNotSelected(product) ||
+                Utilities.isTooLong(product, PRODUCT_FIELD_MAX_SIZE)) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Incorrect Customer Product");
             alert.setContentText("The field 'Product' must be selected " +
@@ -382,9 +386,13 @@ CUSTOMERS
     }
     
     private boolean validateCustomerType() {
-        String customerType = cbCustomerType.getValue().toString();
-        if (Utilities.isNotSelected(customerType) ||
-            Utilities.isTooLong(customerType, CUSTOMER_TYPE_FIELD_MAX_SIZE)) {
+        try {
+            String customerType = cbCustomerType.getValue().toString();
+            if (Utilities.isNotSelected(customerType) ||
+                Utilities.isTooLong(customerType, CUSTOMER_TYPE_FIELD_MAX_SIZE)) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Incorrect Customer Type");
             alert.setContentText("The field 'Customer Type' must be selected " +
@@ -752,6 +760,10 @@ COMPLAINTS
     private int nextComplaintID;
     private DataSet complaintSet;
     private Complaint iteratingComplaint;
+    private final int SERVICE_TYPE_FIELD_MAX_SIZE = 10;
+    private final int COMPLAINT_STATUS_FIELD_MAX_SIZE = 10;
+    private final int PROBLEM_DESCRIPTION_FIELD_MAX_SIZE = 150;
+    private final int SERVICE_NOTES_FIELD_MAX_SIZE = 150;
     
     // Complaint Helper Methods
     private void loadComplaintComboBoxOptions() {
@@ -762,8 +774,6 @@ COMPLAINTS
     private void enableAllComplaintsFields() {
         tfComplaintsCustomerID.setEditable(true);
         tfComplaintsCustomerID.setStyle("-fx-control-inner-background: #FFFFFF;");
-        dpComplaintDate.setEditable(true);
-        dpComplaintDate.setStyle("-fx-control-inner-background: #FFFFFF;");
         cbServiceType.setDisable(false);
         cbServiceType.setStyle("-fx-control-inner-background: #FFFFFF;");
         cbComplaintStatus.setDisable(false);
@@ -876,12 +886,120 @@ COMPLAINTS
     @FXML
     public void saveComplaintButtonClick() {
         if (tfComplaintsCustomerID.isEditable()) {
-            if (nextComplaintSaveAction.equals(SaveAction.NEW)) {
-                saveNewComplaint();
+            if (validateAllComplaintFieldsInput()) {
+                if (nextComplaintSaveAction.equals(SaveAction.NEW)) {
+                    saveNewComplaint();
+                } else {
+                    saveEditedComplaint();
+                }
             } else {
-                saveEditedComplaint();
+                displayInvalidFieldsAlert();
             }
         }
+    }
+    
+    private boolean validateAllComplaintFieldsInput() {
+        boolean allComplaintFieldsAreValid = false;
+        if (
+                validateComplaintCustomerID() &&
+                validateComplaintDate() &&
+                validateServiceType() &&
+                validateComplaintStatus() &&
+                validateProblemDescription() &&
+                validateServiceNotes()
+            ) {
+            allComplaintFieldsAreValid = true;
+        }
+        return allComplaintFieldsAreValid;
+    }
+    
+    private boolean validateComplaintCustomerID() {
+        String complaintCustomerID = tfComplaintsCustomerID.getText();
+        if (Utilities.inexistentCustomerID(complaintCustomerID, customersList)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Customer ID");
+            alert.setContentText("The 'Customer ID' provided does not exist.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateComplaintDate() {
+        LocalDate dateInput = dpComplaintDate.getValue();
+        if (Utilities.isEmptyInput(dateInput)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Complaint Date");
+            alert.setContentText("The 'Complaint Date' must not be empty.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateServiceType() {
+        try {
+            String serviceType = cbServiceType.getValue().toString();
+            if (Utilities.isNotSelected(serviceType) ||
+                Utilities.isTooLong(serviceType, SERVICE_TYPE_FIELD_MAX_SIZE)) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Service Type");
+            alert.setContentText("The field 'Service Type' must be selected " +
+                    "and must not be longer than 10 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateComplaintStatus() {
+        try {
+            String complaintStatus = cbComplaintStatus.getValue().toString();
+            if (Utilities.isNotSelected(complaintStatus) ||
+                Utilities.isTooLong(complaintStatus, COMPLAINT_STATUS_FIELD_MAX_SIZE)) {
+            }
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Complaint Status");
+            alert.setContentText("The field 'Complaint Status' must be selected " +
+                    "and must not be longer than 10 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateProblemDescription() {
+        String problemDescription = taProblemDescription.getText();
+        if (Utilities.isTooLong(problemDescription, 
+                PROBLEM_DESCRIPTION_FIELD_MAX_SIZE) ||
+            Utilities.isEmptyInput(problemDescription)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Problem Description");
+            alert.setContentText("The field 'Problem Description' must be filled in " +
+                    "and must not be longer than 150 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean validateServiceNotes(){
+        String serviceNotes = taServiceNotes.getText();
+        if (Utilities.isTooLong(serviceNotes, 
+                SERVICE_NOTES_FIELD_MAX_SIZE) ||
+            Utilities.isEmptyInput(serviceNotes)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Incorrect Service Notes");
+            alert.setContentText("The field 'Service Notes' must be filled in " +
+                    "and must not be longer than 150 characters.");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
     }
     
     private void saveNewComplaint() {
