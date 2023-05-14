@@ -1331,6 +1331,10 @@ REPORT
                 reportPrint += String.format("%-10s %-10s %-30s %-15s\n", year,
                     week, weekStart, complaintCount);
             }
+            reportPrint += String.format("%-10s %-10s %-30s %-15s\n", "==========",
+                    "==========", "==============================", "===============");
+            reportPrint += String.format("%-10s %-10s %-30s %-15s\n", "",
+                    "", "TOTAL", complaintsList.size());
             getReportDataStatement.close();
             getReportDataQueryResults.close();
             connection.close();
