@@ -1,3 +1,11 @@
+/*
+Central Queensland University
+COIT12200 - Software Design & Development (2023 Term 1)
+Campus: External
+Assignment 2 - Complaints Management System
+Student ID: 12184305
+Student Name: Daniel Barros
+*/
 package CMS.Model;
 
 /**
