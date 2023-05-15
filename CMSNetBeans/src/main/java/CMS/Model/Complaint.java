@@ -3,8 +3,7 @@ package CMS.Model;
 import java.time.LocalDate;
 
 /**
- *
- * @author Daniel Barros
+ * Represents the Complaint entity in the Complaints Management System.
  */
 public class Complaint {
     private String complaintID;
@@ -15,7 +14,20 @@ public class Complaint {
     private String problemDescription;
     private String serviceNotes;
 
-    public Complaint(String complaintID, String complaintsCustomerID, LocalDate complaintDate, String complaintServiceType, String complaintStatus, String problemDescription, String serviceNotes) {
+    /**
+     * Constructor for the Complaint class.
+     * @param complaintID
+     * @param complaintsCustomerID
+     * @param complaintDate
+     * @param complaintServiceType
+     * @param complaintStatus
+     * @param problemDescription
+     * @param serviceNotes
+     */
+    public Complaint(String complaintID, String complaintsCustomerID,
+                     LocalDate complaintDate, String complaintServiceType,
+                     String complaintStatus, String problemDescription,
+                     String serviceNotes) {
         this.complaintID = complaintID;
         this.complaintsCustomerID = complaintsCustomerID;
         this.complaintDate = complaintDate;
@@ -25,6 +37,7 @@ public class Complaint {
         this.serviceNotes = serviceNotes;
     }
 
+    // Getters and Setters
     public String getComplaintID() {
         return complaintID;
     }
@@ -80,9 +93,20 @@ public class Complaint {
     public void setServiceNotes(String serviceNotes) {
         this.serviceNotes = serviceNotes;
     }
-    
+
+    /**
+     * Overridden toString method for the Complaint class. Represents the
+     * Complaint object fields as a String. Used for testing purposes.
+     * @return a String representation of the Complaint object.
+     */
     @Override
     public String toString() {
-        return "Complaint{" + "complaintID=" + complaintID + ", complaintsCustomerID=" + complaintsCustomerID + ", complaintDate=" + complaintDate + ", complaintServiceType=" + complaintServiceType + ", complaintStatus=" + complaintStatus + ", problemDescription=" + problemDescription + ", serviceNotes=" + serviceNotes + '}';
+        return "Complaint{" + "complaintID=" + complaintID +
+                ", complaintsCustomerID=" + complaintsCustomerID +
+                ", complaintDate=" + complaintDate +
+                ", complaintServiceType=" + complaintServiceType +
+                ", complaintStatus=" + complaintStatus +
+                ", problemDescription=" + problemDescription +
+                ", serviceNotes=" + serviceNotes + '}';
     }
 }
