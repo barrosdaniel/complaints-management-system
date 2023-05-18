@@ -369,7 +369,7 @@ public class UserInterfaceController implements Initializable {
         String contactNumberInput = tfContactNumber.getText();
         if (Utilities.isEmptyInput(contactNumberInput) ||
                 Utilities.isNotIntegerInput(contactNumberInput) ||
-                Utilities.isTooLong(customerID, CONTACT_NUMBER_FIELD_MAX_SIZE)) {
+                Utilities.isTooLong(contactNumberInput, CONTACT_NUMBER_FIELD_MAX_SIZE)) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Incorrect Customer Contact Number");
             alert.setContentText("The field 'Contact Number' must be filled in, " +
@@ -668,10 +668,12 @@ public class UserInterfaceController implements Initializable {
     public void viewAllCustomersButtonClick() {
         customerSet = DataSet.FULL_SET;
         disableAllCustomerFields();
-        currentCustomer = 0;
-        numberOfCustomers = customersList.size();
-        displayCustomerRecord(currentCustomer);
-        refreshCustomerPaginationNumbers();
+        if (customersList.size() > 0) {
+            currentCustomer = 0;
+            numberOfCustomers = customersList.size();
+            displayCustomerRecord(currentCustomer);
+            refreshCustomerPaginationNumbers();
+        }
     }
 
     // Clear Customer Button Handlers
@@ -1389,10 +1391,12 @@ public class UserInterfaceController implements Initializable {
     public void viewAllComplaintsButtonClick() {
         complaintSet = DataSet.FULL_SET;
         disableAllComplaintsFields();
-        currentComplaint = 0;
-        numberOfComplaints = complaintsList.size();
-        displayComplaintRecord(currentComplaint);
-        refreshComplaintPaginationNumbers();
+        if (complaintsList.size() > 0) {
+            currentComplaint = 0;
+            numberOfComplaints = complaintsList.size();
+            displayComplaintRecord(currentComplaint);
+            refreshComplaintPaginationNumbers();
+        }
     }
 
     // Clear Complaint Button Handlers

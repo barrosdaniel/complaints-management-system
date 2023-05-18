@@ -183,7 +183,7 @@
                               <Font size="16.0" />
                            </font>
                         </Button>
-                        <Line endX="-116.0" endY="720.0" layoutX="556.0" layoutY="100.0" startX="-116.0" startY="-105.0" />
+                        <Line endX="-116.0" endY="696.0" layoutX="556.0" layoutY="100.0" startX="-116.0" startY="-105.0" />
                         <Label alignment="CENTER" contentDisplay="TOP" layoutX="460.0" layoutY="11.0" prefHeight="35.0" prefWidth="726.0" text="Complaints">
                            <font>
                               <Font size="24.0" />
@@ -320,6 +320,7 @@
                               <Font size="16.0" />
                            </font>
                         </Button>
+                        <Label alignment="CENTER" layoutY="798.0" prefHeight="17.0" prefWidth="1200.0" text="Developed by Daniel Barros | 12184305 | COIT12200 Assessment 2" textAlignment="RIGHT" />
                      </children>
                      <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -348,6 +349,7 @@
                               <Font name="Monospaced Regular" size="16.0" />
                            </font>
                         </TextArea>
+                        <Label alignment="CENTER" layoutY="798.0" prefHeight="17.0" prefWidth="1200.0" text="Developed by Daniel Barros | 12184305 | COIT12200 Assessment 2" textAlignment="RIGHT" />
                      </children>
                   </Pane>
                </content></Tab>
